@@ -1,11 +1,16 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import DashboardPage from "./pages/dashboard/DashboardPage";
+
 
 function App() {
   return (
-    <div>
-      CrypSimulator
+    <div className="">
+      <BrowserRouter>
+        <Routes>
+          <Route path="/dashboard" element={<DashboardPage/>} />
+        </Routes>
+      </BrowserRouter>
     </div>
   );
 }
