@@ -1,6 +1,6 @@
 import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import DashboardPage from "./pages/dashboard/DashboardPage";
+import Dashboard from "./components/dashboard/Dashboard";
 
 
 function App() {
@@ -8,7 +8,7 @@ function App() {
     <div className="">
       <BrowserRouter>
         <Routes>
-          <Route path="/dashboard" element={<DashboardPage/>} />
+          <Route path="/dashboard" element={<Dashboard/>} />
         </Routes>
       </BrowserRouter>
     </div>
