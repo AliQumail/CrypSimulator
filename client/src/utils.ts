@@ -7,7 +7,7 @@ export const formatData = (data: any) => {
           data: [],
           backgroundColor: "rgb(255, 99, 132, 0.8)",
           borderColor: "rgba(255, 99, 132, 0.2)",
-          fill: false
+          fill: true
         }
       ]
     };

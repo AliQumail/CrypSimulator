@@ -156,11 +156,11 @@ export default function User() {
       let dataArr: any = [];
       await fetch(historicalDataURL)
         .then((res) => res.json())
-        .then((data) => (dataArr = data));
-
-      let formattedData = formatData(dataArr);
-
-      setpastData(formattedData);
+        .then((data) => {
+          dataArr = data
+          let formattedData = formatData(dataArr);
+          setpastData(formattedData);
+        });     
     };
 
     fetchHistoricalData();
