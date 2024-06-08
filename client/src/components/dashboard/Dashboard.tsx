@@ -11,7 +11,21 @@ import HistoryChart from "./components/chart/HistoryChart";
 // import Features from "./components/Features";
 // import NavBar from "../navbar/NavBar";
 
+interface ITransaction {
+  currName: string,
+  price: number,
+  isBuy: boolean, 
+  date: Date, 
+}
+
 export default function User() {
+
+  const amount = 10000; 
+
+  const [currBal, setCurrBal] = useState(amount);
+  const [transactions, setTransactions] = useState<ITransaction[]>([]);  
+
+  
   const [userDetails, setUserDetails] = useState({});
   const [currencies, setcurrencies] = useState([]);
   const [pair, setpair] = useState("");
@@ -85,8 +99,6 @@ export default function User() {
         return 0;
       });
 
-      console.log("what is filtered");
-      console.log(filtered);
       setcurrencies(filtered);
       first.current = true;
     };
@@ -133,20 +145,11 @@ export default function User() {
       if (data.type !== "ticker") {
         return;
       }
-      console.log("the value in pair" + pair);
+
       if (data.product_id === pair) {
         setprice(data.price);
         setProductId(data.product_id);
       }
-      // if (data.product_id === "BTC-USD") {
-      //   setBtcPrice(data.price);
-      // }
-
-      //   for (let i = 0; i < records.length; i++) {
-      //     if (data.product_id === records[i].currency) {
-      //       records[i].latestPrice = data.price;
-      //     }
-      //   }
     };
 
     let historicalDataURL = `${url}/products/${pair}/candles?granularity=86400`;
@@ -158,6 +161,8 @@ export default function User() {
         .then((res) => res.json())
         .then((data) => {
           dataArr = data
+          console.log("dataArr")
+          console.log(dataArr)
           let formattedData = formatData(dataArr);
           setpastData(formattedData);
         });     
@@ -182,24 +187,55 @@ export default function User() {
     setpair(e.target.value);
   };
 
+  const handleBuy = () => {
+
+    const priceInt = Number(price)
+    if (currBal < priceInt) {
+      alert("Not enough balance");
+      return;
+    }
+
+    setCurrBal(currBal - priceInt);
+
+    const newTransaction: ITransaction = {
+      currName: productId,
+      price: priceInt,
+      date: new Date(),
+      isBuy: true
+    }
+
+    setTransactions(prevTransactions => [...prevTransactions, newTransaction]);
+    console.log(transactions);
+  }
+
+  
+
   return (
-    <div>
-      <div className="container mt-4">
-        <hr/>
-            {
-              <select name="currency" value={pair} onChange={handleSelect}>
-                {currencies.map((cur: any, idx: number) => {
-                  return (
-                    <option key={idx} value={cur.id}>
-                      {cur.display_name}
-                    </option>
-                  );
-                })}
-              </select>
-            }
-            price {price}
-            <HistoryChart price={price} data={pastData} />      
+    <div className="container mx-auto">
+      <div className="grid grid-cols-12 gap-4">
+        <div className="col-span-4">
+        <button type="button" onClick={handleBuy} className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
+          Green
+        </button>
+        </div>
+        <div className="col-span-8">
+          <h4>Current Balance: {currBal} </h4>
+          {
+            <select name="currency" value={pair} onChange={handleSelect}>
+              {currencies.map((cur: any, idx: number) => {
+                return (
+                  <option key={idx} value={cur.id}>
+                    {cur.display_name}
+                  </option>
+                );
+              })}
+            </select>
+          }
+          price {price}
+          <HistoryChart price={price} data={pastData} />      
+        </div>
       </div>
+      
     </div>
   );
 }
