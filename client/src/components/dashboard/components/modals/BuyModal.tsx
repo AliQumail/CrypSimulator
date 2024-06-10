@@ -1,7 +1,50 @@
 import React, { useState } from "react";
 
-const BuyModal = () => {
+const BuyModal = ({ price, currName, currentBalance, transactions, setTransactions, setCurrBal }: any) => {
   const [showModal, setShowModal] = useState(false);
+
+  const [quantity, setQuantity] = useState(1);
+  const [totalPrice, setTotalPrice] = useState(Number(price));
+
+  const handleQuantity = (event: any) => {
+    setQuantity(event.target.value);
+    setTotalPrice(event.target.value*price);
+  }
+
+  const handleTotalPrice = (event: any) => {
+    setTotalPrice(event.target.value);
+    setQuantity(event.target.value/price);
+  }
+
+  const handleClose = () => {
+    setQuantity(1);
+    setTotalPrice(price);
+    setShowModal(false);
+  }
+
+  const handleBuy = () => {
+    if (totalPrice > currentBalance) {
+        alert("Not enough balance");
+        return;
+    } else {
+        setCurrBal(currentBalance- Number(price));
+        const newTransaction: any = {
+            currName: currName,
+            price: Number(price),
+            date: new Date(),
+            isBuy: true,
+        };
+        setTransactions((prevTransactions: any) => [
+            ...prevTransactions,
+            newTransaction,
+          ]);
+          console.log(transactions);
+    }
+
+    setShowModal(false);
+
+  }
+
   return (
     <>
       <button
@@ -43,41 +86,53 @@ const BuyModal = () => {
                       className="text-lg leading-6 font-medium text-gray-900"
                       id="modal-headline"
                     >
-                      Terms of Service
+                      Buy
                     </h3>
-                    <div className="mt-2">
-                      <p className="text-sm text-gray-500">
-                        With less than a month to go before the European Union
-                        enacts new consumer privacy laws for its citizens,
-                        companies around the world are updating their terms of
-                        service agreements to comply.
-                      </p>
-                      <p className="text-sm text-gray-500">
-                        The European Union’s General Data Protection Regulation
-                        (G.D.P.R.) goes into effect on May 25 and is meant to
-                        ensure a common set of data rights in the European
-                        Union. It requires organizations to notify users as
-                        soon as possible of high-risk data breaches that could
-                        personally affect them.
-                      </p>
+                    <p>Your current balance is $ {currentBalance} </p>
+                    <br />
+                    <div className="flex flex-wrap -mx-3 mb-6">
+                      <div className="mb-6">
+                        <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                          Quantity
+                        </label>
+                        <input
+                          type="text"
+                          value={quantity}
+                          onChange={handleQuantity}
+                          id="default-input"
+                          className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+                        />
+                      </div>
+                      <div className="mb-6">
+                        <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                          Price
+                        </label>
+                        <input
+                          type="text"
+                          id="default-input"
+                          value={totalPrice}
+                          onChange={handleTotalPrice}
+                          className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
               <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
                 <button
-                  onClick={() => setShowModal(false)}
+                  onClick={handleBuy}
                   type="button"
                   className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm"
                 >
-                  Accept
+                  Buy
                 </button>
                 <button
-                  onClick={() => setShowModal(false)}
+                  onClick={handleClose}
                   type="button"
                   className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
                 >
-                  Decline
+                  Cancel
                 </button>
               </div>
             </div>

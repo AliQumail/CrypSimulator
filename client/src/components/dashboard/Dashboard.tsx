@@ -5,7 +5,7 @@ import { formatData } from "../../utils";
 // import { Container, Row, Col } from "react-bootstrap";
 import axios from "axios";
 import HistoryChart from "./components/chart/HistoryChart";
-import BuyModal from "./components/BuyModal";
+import BuyModal from "./components/modals/BuyModal";
 // import TotalStats from "./components/TotalStats";
 // import Records from "./components/Records";
 // import CurrencyStats from "./components/CurrencyStats";
@@ -13,20 +13,18 @@ import BuyModal from "./components/BuyModal";
 // import NavBar from "../navbar/NavBar";
 
 interface ITransaction {
-  currName: string,
-  price: number,
-  isBuy: boolean, 
-  date: Date, 
+  currName: string;
+  price: number;
+  isBuy: boolean;
+  date: Date;
 }
 
 export default function User() {
-
-  const amount = 10000; 
+  const amount = 10000;
 
   const [currBal, setCurrBal] = useState(amount);
-  const [transactions, setTransactions] = useState<ITransaction[]>([]);  
+  const [transactions, setTransactions] = useState<ITransaction[]>([]);
 
-  
   const [userDetails, setUserDetails] = useState({});
   const [currencies, setcurrencies] = useState([]);
   const [pair, setpair] = useState("");
@@ -53,20 +51,14 @@ export default function User() {
     //window.location.href = "/signin";
   }
 
-  
-
-  
-
-
   const updateLatestPrice = async () => {
-    let newRecords: any = records.map((obj:any) => {
+    let newRecords: any = records.map((obj: any) => {
       return { ...obj, latestPrice: 20 };
     });
-    console.log("newRecords")
+    console.log("newRecords");
     console.log(newRecords);
     setRecords(newRecords);
   };
-
 
   let first = useRef(false);
   const url = "https://api.pro.coinbase.com";
@@ -161,17 +153,17 @@ export default function User() {
       await fetch(historicalDataURL)
         .then((res) => res.json())
         .then((data) => {
-          dataArr = data
-          console.log("dataArr")
-          console.log(dataArr)
+          dataArr = data;
+          console.log("dataArr");
+          console.log(dataArr);
           let formattedData = formatData(dataArr);
           setpastData(formattedData);
-        });     
+        });
     };
 
     fetchHistoricalData();
   }, [pair]);
-  
+
   useEffect(() => {
     if (records.length > 0) {
       updateLatestPrice();
@@ -189,8 +181,7 @@ export default function User() {
   };
 
   const handleBuy = () => {
-
-    const priceInt = Number(price)
+    const priceInt = Number(price);
     if (currBal < priceInt) {
       alert("Not enough balance");
       return;
@@ -202,23 +193,35 @@ export default function User() {
       currName: productId,
       price: priceInt,
       date: new Date(),
-      isBuy: true
-    }
+      isBuy: true,
+    };
 
-    setTransactions(prevTransactions => [...prevTransactions, newTransaction]);
+    setTransactions((prevTransactions) => [
+      ...prevTransactions,
+      newTransaction,
+    ]);
     console.log(transactions);
-  }
-
-  
+  };
 
   return (
     <div className="container mx-auto">
       <div className="grid grid-cols-12 gap-4">
         <div className="col-span-4">
-        <button type="button" onClick={handleBuy} className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
-          Green
-        </button>
-        <BuyModal/>
+          <button
+            type="button"
+            onClick={handleBuy}
+            className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+          >
+            Green
+          </button>
+          <BuyModal
+            price={price}
+            currName={productId}
+            currentBalance={currBal}
+            transactions={transactions}
+            setTransactions={setTransactions}
+            setCurrBal={setCurrBal}
+          />
         </div>
         <div className="col-span-8">
           <h4>Current Balance: {currBal} </h4>
@@ -234,10 +237,9 @@ export default function User() {
             </select>
           }
           price {price}
-          <HistoryChart price={price} data={pastData} />      
+          {/* <HistoryChart price={price} data={pastData} />       */}
         </div>
       </div>
-      
     </div>
   );
 }
