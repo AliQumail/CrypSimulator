@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const BuyModal = ({ price, currName, currentBalance, transactions, setTransactions, setCurrBal }: any) => {
+const SellModal = ({ price, currName, currentBalance, transactions, setTransactions, setCurrBal }: any) => {
   const [showModal, setShowModal] = useState(false);
 
   const [quantity, setQuantity] = useState(1);
@@ -143,4 +143,4 @@ const BuyModal = ({ price, currName, currentBalance, transactions, setTransactio
   );
 };
 
-export default BuyModal;
+export default SellModal;

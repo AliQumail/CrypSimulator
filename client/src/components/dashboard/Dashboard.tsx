@@ -203,10 +203,15 @@ export default function User() {
     console.log(transactions);
   };
 
+  const [showTransactions, setShowTransactions] = useState<Boolean>(false);
+  const handleShowTransactions = () => {
+    setShowTransactions((prevVal) => !prevVal);
+  };
+
   return (
     <div className="container mx-auto">
       <div className="grid grid-cols-12 gap-4">
-        <div className="col-span-4">
+        <div className="col-span-3">
           <button
             type="button"
             onClick={handleBuy}
@@ -223,21 +228,53 @@ export default function User() {
             setCurrBal={setCurrBal}
           />
         </div>
-        <div className="col-span-8">
-          <h4>Current Balance: {currBal} </h4>
-          {
-            <select name="currency" value={pair} onChange={handleSelect}>
-              {currencies.map((cur: any, idx: number) => {
-                return (
-                  <option key={idx} value={cur.id}>
-                    {cur.display_name}
-                  </option>
-                );
-              })}
-            </select>
-          }
-          price {price}
-          {/* <HistoryChart price={price} data={pastData} />       */}
+        <div className="col-span-9">
+          <button onClick={handleShowTransactions} type="button">
+            {showTransactions ? "Show graph" : "Show transactions"}
+          </button>
+          {showTransactions ? (
+            <div className="relative overflow-x-auto">
+            <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+            <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+              <tr>
+                <th>Currency</th>
+                <th>Price</th>
+                <th>Action</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                transactions.map((tran) => {
+                  return  <tr>
+                  <td>{tran.currName}</td>
+                  <td>{tran.price}</td>
+                  <td>{tran.isBuy ? 'Bought': 'Sold'}</td>
+                  <td>{tran.date.toString()}</td>
+                </tr>
+                })
+              }
+            </tbody>
+          </table>
+          </div>
+          ) : (
+            <div>
+              <h4>Current Balance: {currBal} </h4>
+              {
+                <select name="currency" value={pair} onChange={handleSelect}>
+                  {currencies.map((cur: any, idx: number) => {
+                    return (
+                      <option key={idx} value={cur.id}>
+                        {cur.display_name}
+                      </option>
+                    );
+                  })}
+                </select>
+              }
+              price {price}
+              {/* <HistoryChart price={price} data={pastData} />       */}
+            </div>
+          )}
         </div>
       </div>
     </div>
