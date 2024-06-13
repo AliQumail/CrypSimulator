@@ -1,16 +1,7 @@
-import React, { useState, useEffect, useRef } from "react";
-//import Dashboard from "./components/Dashboard";
+import { useState, useEffect, useRef } from "react";
 import { formatData } from "../../utils";
-
-// import { Container, Row, Col } from "react-bootstrap";
-import axios from "axios";
-import HistoryChart from "./components/chart/HistoryChart";
 import BuyModal from "./components/modals/BuyModal";
-// import TotalStats from "./components/TotalStats";
-// import Records from "./components/Records";
-// import CurrencyStats from "./components/CurrencyStats";
-// import Features from "./components/Features";
-// import NavBar from "../navbar/NavBar";
+import SellModal from "./components/modals/SellModal";
 
 interface ITransaction {
   currName: string;
@@ -19,37 +10,28 @@ interface ITransaction {
   date: Date;
 }
 
+interface IUserCurrencyHoldings {
+  userId: string, 
+  currencyName: string, 
+  amount: number 
+}
+
 export default function User() {
   const amount = 10000;
 
   const [currBal, setCurrBal] = useState(amount);
   const [transactions, setTransactions] = useState<ITransaction[]>([]);
+  const [userCurrencyHoldings, setUserCurrencyHoldings] = useState([]);
 
-  const [userDetails, setUserDetails] = useState({});
+ 
   const [currencies, setcurrencies] = useState([]);
   const [pair, setpair] = useState("");
   const [price, setprice] = useState("0.00"); // my code
   const [productId, setProductId] = useState(""); //
   const [pastData, setpastData] = useState({});
   const ws: any = useRef(null);
-  const [money, setMoney] = useState(500000); // my code
-  const [tracker, setTracker] = useState([]);
-  const [btcPrice, setBtcPrice] = useState(0); // my code
-  const [currentBalance, setCurrentBalance] = useState();
-  const [boughtCurrency, setBoughtCurrency] = useState({
-    type: "",
-    boughtPrice: " ",
-  });
-
-  const [newPrices, setNewPrices] = useState([]);
   const [records, setRecords] = useState([]);
 
-  // Getting user details from backend
-  const token = localStorage.getItem("token");
-  if (!token) {
-    localStorage.removeItem("token");
-    //window.location.href = "/signin";
-  }
 
   const updateLatestPrice = async () => {
     let newRecords: any = records.map((obj: any) => {
@@ -122,9 +104,9 @@ export default function User() {
     ws.current.onmessage = (e: any) => {
       let newData = JSON.parse(e.data);
       console.log("new data" + newData);
-      if (newData.productId === "BTC-USD") {
-        setBtcPrice(newData.price);
-      }
+      // if (newData.productId === "BTC-USD") {
+      //   setBtcPrice(newData.price);
+      // }
     };
     // try code
 
@@ -227,6 +209,15 @@ export default function User() {
             setTransactions={setTransactions}
             setCurrBal={setCurrBal}
           />
+
+          <SellModal>
+            price={price}
+            currName={productId}
+            currentBalance={currBal}
+            setCurrBal={setCurrBal}
+            userCurrencyHoldings={userCurrencyHoldings}
+            setUserCurrencyHoldings={setUserCurrencyHoldings}
+          </SellModal>
         </div>
         <div className="col-span-9">
           <button onClick={handleShowTransactions} type="button">

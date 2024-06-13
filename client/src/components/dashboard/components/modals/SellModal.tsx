@@ -1,49 +1,62 @@
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
 
-const SellModal = ({ price, currName, currentBalance, transactions, setTransactions, setCurrBal }: any) => {
+const SellModal = ({
+  price,
+  currName,
+  currentBalance,
+  transactions,
+  setTransactions,
+  setCurrBal,
+  userCurrencyHoldings,
+  setUserCurrencyHoldings,
+}: any) => {
+
   const [showModal, setShowModal] = useState(false);
 
   const [quantity, setQuantity] = useState(1);
   const [totalPrice, setTotalPrice] = useState(Number(price));
 
+  const [totalCurrencyHolding, setTotalCurrencyHolding] = useState<number>(0);
+
   const handleQuantity = (event: any) => {
     setQuantity(event.target.value);
-    setTotalPrice(event.target.value*price);
-  }
+    setTotalPrice(event.target.value * price);
+  };
 
   const handleTotalPrice = (event: any) => {
     setTotalPrice(event.target.value);
-    setQuantity(event.target.value/price);
-  }
+    setQuantity(event.target.value / price);
+  };
 
   const handleClose = () => {
     setQuantity(1);
     setTotalPrice(price);
     setShowModal(false);
-  }
+  };
 
-  const handleBuy = () => {
-    if (totalPrice > currentBalance) {
-        alert("Not enough balance");
-        return;
+  useEffect(()=>{
+    // if userCurrencyHoldings.
+  })
+
+  const handleSell = () => {
+    if (quantity > totalCurrencyHolding) {
+      alert("Not enough currency holding");
+      return;
     } else {
-        setCurrBal(currentBalance- Number(price));
-        const newTransaction: any = {
-            currName: currName,
-            price: Number(price),
-            date: new Date(),
-            isBuy: true,
-        };
-        setTransactions((prevTransactions: any) => [
-            ...prevTransactions,
-            newTransaction,
-          ]);
-          console.log(transactions);
+      setCurrBal(currentBalance + totalPrice);
+      const newTransaction: any = {
+        currName: currName,
+        price: Number(price),
+        date: new Date(),
+        isBuy: false,
+      };
+      setTransactions((prevTransactions: any) => [
+        ...prevTransactions,
+        newTransaction,
+      ]);
     }
-
-    setShowModal(false);
-
-  }
+    handleClose();
+  };
 
   return (
     <>
@@ -121,7 +134,7 @@ const SellModal = ({ price, currName, currentBalance, transactions, setTransacti
               </div>
               <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
                 <button
-                  onClick={handleBuy}
+                  onClick={handleSell}
                   type="button"
                   className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm"
                 >
