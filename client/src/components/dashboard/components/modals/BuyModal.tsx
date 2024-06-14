@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const BuyModal = ({ price, currName, currentBalance, transactions, setTransactions, setCurrBal }: any) => {
+const BuyModal = ({ price, currencyName, currentBalance, transactions, setTransactions, setCurrentBalance }: any) => {
   const [showModal, setShowModal] = useState(false);
 
   const [quantity, setQuantity] = useState(1);
@@ -27,10 +27,11 @@ const BuyModal = ({ price, currName, currentBalance, transactions, setTransactio
         alert("Not enough balance");
         return;
     } else {
-        setCurrBal(currentBalance- Number(price));
+        setCurrentBalance(currentBalance- Number(totalPrice));
         const newTransaction: any = {
-            currName: currName,
-            price: Number(price),
+            currencyName: currencyName,
+            quantity: quantity,
+            price: Number(totalPrice),
             date: new Date(),
             isBuy: true,
         };
@@ -41,21 +42,19 @@ const BuyModal = ({ price, currName, currentBalance, transactions, setTransactio
           console.log(transactions);
     }
 
-    setShowModal(false);
-
+    handleClose();
   }
 
   return (
     <>
-      <button
+      <button 
+        type="button" 
+        className="text-white bg-green-700 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2"
+        style={{ width: '200px' }}
+        onClick={() => setShowModal(true)}
         data-modal-target="default-modal"
         data-modal-toggle="default-modal"
-        className="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-        type="button"
-        onClick={() => setShowModal(true)}
-      >
-        Buy
-      </button>
+      > Buy </button>
       {showModal && (
         <div
           id="default-modal"
@@ -90,7 +89,9 @@ const BuyModal = ({ price, currName, currentBalance, transactions, setTransactio
                     </h3>
                     <p>Your current balance is $ {currentBalance} </p>
                     <br />
-                    <div className="flex flex-wrap -mx-3 mb-6">
+                    {
+                      price > 0 ?
+                      <div className="flex flex-wrap -mx-3 mb-6">
                       <div className="mb-6">
                         <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
                           Quantity
@@ -115,7 +116,10 @@ const BuyModal = ({ price, currName, currentBalance, transactions, setTransactio
                           className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
                         />
                       </div>
-                    </div>
+                    </div> 
+                      : <div>No currency selected!</div>
+                    }
+                    
                   </div>
                 </div>
               </div>
@@ -123,6 +127,7 @@ const BuyModal = ({ price, currName, currentBalance, transactions, setTransactio
                 <button
                   onClick={handleBuy}
                   type="button"
+                  disabled={price <= 0}
                   className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm"
                 >
                   Buy

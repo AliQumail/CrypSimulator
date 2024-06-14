@@ -1,18 +1,8 @@
 import { useState, useEffect } from "react";
 
-const SellModal = ({
-  price,
-  currName,
-  currentBalance,
-  transactions,
-  setTransactions,
-  setCurrBal,
-  userCurrencyHoldings,
-  setUserCurrencyHoldings,
-}: any) => {
+const SellModal = ({price, currentBalance, setCurrentBalance, currencyName, setTransactions}: any) => {
 
   const [showModal, setShowModal] = useState(false);
-
   const [quantity, setQuantity] = useState(1);
   const [totalPrice, setTotalPrice] = useState(Number(price));
 
@@ -20,7 +10,7 @@ const SellModal = ({
 
   const handleQuantity = (event: any) => {
     setQuantity(event.target.value);
-    setTotalPrice(event.target.value * price);
+    setTotalPrice(event.target.value * totalPrice);
   };
 
   const handleTotalPrice = (event: any) => {
@@ -43,9 +33,9 @@ const SellModal = ({
       alert("Not enough currency holding");
       return;
     } else {
-      setCurrBal(currentBalance + totalPrice);
+      setCurrentBalance(currentBalance + totalPrice);
       const newTransaction: any = {
-        currName: currName,
+        currName: currencyName,
         price: Number(price),
         date: new Date(),
         isBuy: false,
@@ -67,7 +57,7 @@ const SellModal = ({
         type="button"
         onClick={() => setShowModal(true)}
       >
-        Buy
+        Sell
       </button>
       {showModal && (
         <div
@@ -99,9 +89,9 @@ const SellModal = ({
                       className="text-lg leading-6 font-medium text-gray-900"
                       id="modal-headline"
                     >
-                      Buy
+                      Sell
                     </h3>
-                    <p>Your current balance is $ {currentBalance} </p>
+                    <p>Your current balance is $ {price} </p>
                     <br />
                     <div className="flex flex-wrap -mx-3 mb-6">
                       <div className="mb-6">

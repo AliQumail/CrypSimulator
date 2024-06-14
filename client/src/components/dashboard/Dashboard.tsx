@@ -4,7 +4,8 @@ import BuyModal from "./components/modals/BuyModal";
 import SellModal from "./components/modals/SellModal";
 
 interface ITransaction {
-  currName: string;
+  currencyName: string;
+  quantity: number;
   price: number;
   isBuy: boolean;
   date: Date;
@@ -19,9 +20,9 @@ interface IUserCurrencyHoldings {
 export default function User() {
   const amount = 10000;
 
-  const [currBal, setCurrBal] = useState(amount);
+  const [currencyBalance, setCurrencyBalance] = useState(amount);
   const [transactions, setTransactions] = useState<ITransaction[]>([]);
-  const [userCurrencyHoldings, setUserCurrencyHoldings] = useState([]);
+  const [userCurrencyHoldings, setUserCurrencyHoldings] = useState<IUserCurrencyHoldings[]>([]);
 
  
   const [currencies, setcurrencies] = useState([]);
@@ -37,8 +38,7 @@ export default function User() {
     let newRecords: any = records.map((obj: any) => {
       return { ...obj, latestPrice: 20 };
     });
-    console.log("newRecords");
-    console.log(newRecords);
+  
     setRecords(newRecords);
   };
 
@@ -103,7 +103,7 @@ export default function User() {
 
     ws.current.onmessage = (e: any) => {
       let newData = JSON.parse(e.data);
-      console.log("new data" + newData);
+   
       // if (newData.productId === "BTC-USD") {
       //   setBtcPrice(newData.price);
       // }
@@ -128,16 +128,14 @@ export default function User() {
     };
 
     let historicalDataURL = `${url}/products/${pair}/candles?granularity=86400`;
-    console.log("historical data URL");
-    console.log(historicalDataURL);
+  
     const fetchHistoricalData = async () => {
       let dataArr: any = [];
       await fetch(historicalDataURL)
         .then((res) => res.json())
         .then((data) => {
           dataArr = data;
-          console.log("dataArr");
-          console.log(dataArr);
+        
           let formattedData = formatData(dataArr);
           setpastData(formattedData);
         });
@@ -162,29 +160,6 @@ export default function User() {
     setpair(e.target.value);
   };
 
-  const handleBuy = () => {
-    const priceInt = Number(price);
-    if (currBal < priceInt) {
-      alert("Not enough balance");
-      return;
-    }
-
-    setCurrBal(currBal - priceInt);
-
-    const newTransaction: ITransaction = {
-      currName: productId,
-      price: priceInt,
-      date: new Date(),
-      isBuy: true,
-    };
-
-    setTransactions((prevTransactions) => [
-      ...prevTransactions,
-      newTransaction,
-    ]);
-    console.log(transactions);
-  };
-
   const [showTransactions, setShowTransactions] = useState<Boolean>(false);
   const handleShowTransactions = () => {
     setShowTransactions((prevVal) => !prevVal);
@@ -194,29 +169,21 @@ export default function User() {
     <div className="container mx-auto">
       <div className="grid grid-cols-12 gap-4">
         <div className="col-span-3">
-          <button
-            type="button"
-            onClick={handleBuy}
-            className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
-          >
-            Green
-          </button>
           <BuyModal
             price={price}
-            currName={productId}
-            currentBalance={currBal}
+            currencyName={productId}
+            currentBalance={currencyBalance}
             transactions={transactions}
             setTransactions={setTransactions}
-            setCurrBal={setCurrBal}
+            setCurrentBalance={setCurrencyBalance}
           />
 
           <SellModal>
             price={price}
-            currName={productId}
-            currentBalance={currBal}
-            setCurrBal={setCurrBal}
-            userCurrencyHoldings={userCurrencyHoldings}
-            setUserCurrencyHoldings={setUserCurrencyHoldings}
+            currentBalance={currencyBalance}
+            setCurrentBalance={setCurrencyBalance} 
+            currencyName={productId} 
+            setTransactions={setTransactions}
           </SellModal>
         </div>
         <div className="col-span-9">
@@ -229,6 +196,7 @@ export default function User() {
             <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
               <tr>
                 <th>Currency</th>
+                <th>Quantity</th>
                 <th>Price</th>
                 <th>Action</th>
                 <th>Date</th>
@@ -238,7 +206,8 @@ export default function User() {
               {
                 transactions.map((tran) => {
                   return  <tr>
-                  <td>{tran.currName}</td>
+                  <td>{tran.currencyName}</td>
+                  <td>{tran.quantity}</td>
                   <td>{tran.price}</td>
                   <td>{tran.isBuy ? 'Bought': 'Sold'}</td>
                   <td>{tran.date.toString()}</td>
@@ -250,7 +219,7 @@ export default function User() {
           </div>
           ) : (
             <div>
-              <h4>Current Balance: {currBal} </h4>
+              <h4>Current Balance: {currencyBalance} </h4>
               {
                 <select name="currency" value={pair} onChange={handleSelect}>
                   {currencies.map((cur: any, idx: number) => {
