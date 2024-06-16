@@ -20,7 +20,7 @@ interface IUserCurrencyHoldings {
 export default function User() {
   const amount = 10000;
 
-  const [currencyBalance, setCurrencyBalance] = useState(amount);
+  const [currentBalance, setcurrentBalance] = useState(amount);
   const [transactions, setTransactions] = useState<ITransaction[]>([]);
   const [userCurrencyHoldings, setUserCurrencyHoldings] = useState<IUserCurrencyHoldings[]>([]);
 
@@ -172,19 +172,25 @@ export default function User() {
           <BuyModal
             price={price}
             currencyName={productId}
-            currentBalance={currencyBalance}
+            currentBalance={currentBalance}
             transactions={transactions}
             setTransactions={setTransactions}
-            setCurrentBalance={setCurrencyBalance}
+            setCurrentBalance={setcurrentBalance}
+          />
+          
+          <SellModal
+            price={price}
+            currencyName={productId}
+            currentBalance={currentBalance}
+            transactions={transactions}
+            setTransactions={setTransactions}
+            setCurrentBalance={setcurrentBalance}
+            userCurrencyHoldings={userCurrencyHoldings}
+            setUserCurrencyHoldings={setUserCurrencyHoldings}
           />
 
-          <SellModal>
-            price={price}
-            currentBalance={currencyBalance}
-            setCurrentBalance={setCurrencyBalance} 
-            currencyName={productId} 
-            setTransactions={setTransactions}
-          </SellModal>
+          
+
         </div>
         <div className="col-span-9">
           <button onClick={handleShowTransactions} type="button">
@@ -219,7 +225,7 @@ export default function User() {
           </div>
           ) : (
             <div>
-              <h4>Current Balance: {currencyBalance} </h4>
+              <h4>Current Balance: {currentBalance} </h4>
               {
                 <select name="currency" value={pair} onChange={handleSelect}>
                   {currencies.map((cur: any, idx: number) => {

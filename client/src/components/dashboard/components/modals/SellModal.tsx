@@ -1,64 +1,60 @@
-import { useState, useEffect } from "react";
+import React, { useState } from "react";
 
-const SellModal = ({price, currentBalance, setCurrentBalance, currencyName, setTransactions}: any) => {
-
+const SellModal = ({ price, currencyName, currentBalance, transactions, setTransactions, setCurrentBalance }: any) => {
   const [showModal, setShowModal] = useState(false);
+
   const [quantity, setQuantity] = useState(1);
   const [totalPrice, setTotalPrice] = useState(Number(price));
 
-  const [totalCurrencyHolding, setTotalCurrencyHolding] = useState<number>(0);
-
   const handleQuantity = (event: any) => {
     setQuantity(event.target.value);
-    setTotalPrice(event.target.value * totalPrice);
-  };
+    setTotalPrice(event.target.value*price);
+  }
 
   const handleTotalPrice = (event: any) => {
     setTotalPrice(event.target.value);
-    setQuantity(event.target.value / price);
-  };
+    setQuantity(event.target.value/price);
+  }
 
   const handleClose = () => {
-    setQuantity(1);
-    setTotalPrice(price);
+    setQuantity(0);
+    setTotalPrice(0);
     setShowModal(false);
-  };
-
-  useEffect(()=>{
-    // if userCurrencyHoldings.
-  })
+  }
 
   const handleSell = () => {
-    if (quantity > totalCurrencyHolding) {
-      alert("Not enough currency holding");
-      return;
+    if (totalPrice > currentBalance) {
+        alert("Not enough balance");
+        return;
     } else {
-      setCurrentBalance(currentBalance + totalPrice);
-      const newTransaction: any = {
-        currName: currencyName,
-        price: Number(price),
-        date: new Date(),
-        isBuy: false,
-      };
-      setTransactions((prevTransactions: any) => [
-        ...prevTransactions,
-        newTransaction,
-      ]);
+        setCurrentBalance(currentBalance- Number(totalPrice));
+        const newTransaction: any = {
+            currencyName: currencyName,
+            quantity: quantity,
+            price: Number(totalPrice),
+            date: new Date(),
+            isBuy: true,
+        };
+        setTransactions((prevTransactions: any) => [
+            ...prevTransactions,
+            newTransaction,
+          ]);
+          console.log(transactions);
     }
+
     handleClose();
-  };
+  }
 
   return (
     <>
-      <button
+      <button 
+        type="button" 
+        className="text-white bg-red-700 font-medium rounded-md text-sm px-5 py-2.5 me-2 mb-2"
+        style={{ width: '200px' }}
+        onClick={() => setShowModal(true)}
         data-modal-target="default-modal"
         data-modal-toggle="default-modal"
-        className="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-        type="button"
-        onClick={() => setShowModal(true)}
-      >
-        Sell
-      </button>
+      > Sell </button>
       {showModal && (
         <div
           id="default-modal"
@@ -91,9 +87,11 @@ const SellModal = ({price, currentBalance, setCurrentBalance, currencyName, setT
                     >
                       Sell
                     </h3>
-                    <p>Your current balance is $ {price} </p>
+                    <p>Your current balance is $ {currentBalance} </p>
                     <br />
-                    <div className="flex flex-wrap -mx-3 mb-6">
+                    {
+                      price > 0 ?
+                      <div className="flex flex-wrap -mx-3 mb-6">
                       <div className="mb-6">
                         <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
                           Quantity
@@ -118,7 +116,10 @@ const SellModal = ({price, currentBalance, setCurrentBalance, currencyName, setT
                           className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
                         />
                       </div>
-                    </div>
+                    </div> 
+                      : <div>No currency selected!</div>
+                    }
+                    
                   </div>
                 </div>
               </div>
@@ -126,6 +127,7 @@ const SellModal = ({price, currentBalance, setCurrentBalance, currencyName, setT
                 <button
                   onClick={handleSell}
                   type="button"
+                  disabled={price <= 0}
                   className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm"
                 >
                   Buy
