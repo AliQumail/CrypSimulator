@@ -1,6 +1,6 @@
-namespace TransactionService.Entities;
+namespace TransactionService.DTOs;
 
-public class Transaction 
+public class TransactionDto
 {
     public Guid Id { get; set; }
     public string CurrencyName { get; set; } = string.Empty;
