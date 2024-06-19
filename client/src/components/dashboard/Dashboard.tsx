@@ -2,13 +2,17 @@ import { useState, useEffect, useRef } from "react";
 import { formatData } from "../../utils";
 import BuyModal from "./components/modals/BuyModal";
 import SellModal from "./components/modals/SellModal";
+import axios from 'axios';
+import { URL } from "../../constants";
 
 interface ITransaction {
+  id: string
   currencyName: string;
   quantity: number;
   price: number;
   isBuy: boolean;
   date: Date;
+  userId: string
 }
 
 interface IUserCurrencyHoldings {
@@ -33,6 +37,20 @@ export default function User() {
   const ws: any = useRef(null);
   const [records, setRecords] = useState([]);
 
+  const USER_ID = 'b366d3cb-26ef-43b1-b2eb-89ecb7bff869'
+  const GetTransactionsByUser = async () => {
+    try {
+      const response = await fetch("http://localhost:5146/Transaction/GetTransactionsByUser?userId=b366d3cb-26ef-43b1-b2eb-89ecb7bff869");
+      if (response.ok){
+        const data = await response.json();
+        console.log(data);
+        setTransactions(data);
+        console.log(transactions);
+      }
+    } catch (error) {
+      console.error('Fetch error:', error);
+    }
+  };
 
   const updateLatestPrice = async () => {
     let newRecords: any = records.map((obj: any) => {
@@ -46,6 +64,7 @@ export default function User() {
   const url = "https://api.pro.coinbase.com";
 
   useEffect(() => {
+    GetTransactionsByUser(); 
     ws.current = new WebSocket("wss://ws-feed.pro.coinbase.com");
 
     let pairs: any = [];

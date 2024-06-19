@@ -33,8 +33,22 @@ const SellModal = ({ price, currencyName, currentBalance, transactions, setTrans
             quantity: quantity,
             price: Number(totalPrice),
             date: new Date(),
-            isBuy: true,
+            isBuy: false,
         };
+
+        fetch('http://localhost:5146/Transaction/AddTransaction', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(newTransaction),
+        }).then(response => {
+          if (!response.ok) {
+              throw new Error('Network response was not ok');
+          }
+          return response.json(); 
+        }); 
+
         setTransactions((prevTransactions: any) => [
             ...prevTransactions,
             newTransaction,

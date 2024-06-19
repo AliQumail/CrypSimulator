@@ -35,6 +35,23 @@ const BuyModal = ({ price, currencyName, currentBalance, transactions, setTransa
             date: new Date(),
             isBuy: true,
         };
+
+         // API Call here 
+         fetch('http://localhost:5146/Transaction/AddTransaction', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(newTransaction),
+        }).then(response => {
+          if (!response.ok) {
+              throw new Error('Network response was not ok');
+          }
+          return response.json(); 
+        })
+
+
+        
         setTransactions((prevTransactions: any) => [
             ...prevTransactions,
             newTransaction,

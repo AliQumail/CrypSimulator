@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using TransactionService.Data;
@@ -21,10 +22,10 @@ public class TransactionController : ControllerBase
 
     [HttpPost]
     [Route("AddTransaction")]
-    public async Task<ActionResult<Transaction>> AddTransaction(AddTransactionDto request)
+    public async Task<ActionResult<Transaction>> AddTransaction([FromBody] AddTransactionDto request)
     {
         var transaction = _mapper.Map<Transaction>(request);
-        transaction.Date = DateTime.Now;
+        transaction.Date = DateTime.UtcNow;
         _context.Transactions.Add(transaction);
         var result = await _context.SaveChangesAsync() > 0;
         if (!result) BadRequest("Failed to add transaciton");
@@ -33,9 +34,9 @@ public class TransactionController : ControllerBase
 
     [HttpGet]
     [Route("GetTransactionsByUser")]
-    public List<TransactionDto> GetTransactionsByUser(Guid userId)
+    public List<TransactionDto> GetTransactionsByUser([FromQuery] Guid userId)
     {
-        var transactions = _context.Transactions.Where(x => x.Id == userId ).ToList();
+        var transactions = _context.Transactions.Where(x => x.UserId == userId ).ToList();
         var mappedTransactions = _mapper.Map<List<TransactionDto>>(transactions);
         return mappedTransactions; 
     }

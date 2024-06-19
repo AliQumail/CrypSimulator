@@ -17,6 +17,11 @@ builder.Services.AddDbContext<CrypDbContext>(options =>
 
 var app = builder.Build();
 
+app.UseCors(options =>
+            options.WithOrigins("http://localhost:3000")
+            .AllowAnyHeader()
+            .AllowAnyMethod());
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
