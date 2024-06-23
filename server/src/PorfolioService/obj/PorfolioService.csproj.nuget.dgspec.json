@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\aqasy\\Documents\\personals\\Projects\\CrypSimulator\\server\\src\\TransactionService\\TransactionService.csproj": {}
+    "C:\\Users\\aqasy\\Documents\\personals\\Projects\\CrypSimulator\\server\\src\\PorfolioService\\PorfolioService.csproj": {}
   },
   "projects": {
-    "C:\\Users\\aqasy\\Documents\\personals\\Projects\\CrypSimulator\\server\\src\\TransactionService\\TransactionService.csproj": {
+    "C:\\Users\\aqasy\\Documents\\personals\\Projects\\CrypSimulator\\server\\src\\PorfolioService\\PorfolioService.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\aqasy\\Documents\\personals\\Projects\\CrypSimulator\\server\\src\\TransactionService\\TransactionService.csproj",
-        "projectName": "TransactionService",
-        "projectPath": "C:\\Users\\aqasy\\Documents\\personals\\Projects\\CrypSimulator\\server\\src\\TransactionService\\TransactionService.csproj",
+        "projectUniqueName": "C:\\Users\\aqasy\\Documents\\personals\\Projects\\CrypSimulator\\server\\src\\PorfolioService\\PorfolioService.csproj",
+        "projectName": "PorfolioService",
+        "projectPath": "C:\\Users\\aqasy\\Documents\\personals\\Projects\\CrypSimulator\\server\\src\\PorfolioService\\PorfolioService.csproj",
         "packagesPath": "C:\\Users\\aqasy\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\aqasy\\Documents\\personals\\Projects\\CrypSimulator\\server\\src\\TransactionService\\obj\\",
+        "outputPath": "C:\\Users\\aqasy\\Documents\\personals\\Projects\\CrypSimulator\\server\\src\\PorfolioService\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\aqasy\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -45,24 +45,6 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "dependencies": {
-            "AutoMapper.Extensions.Microsoft.DependencyInjection": {
-              "target": "Package",
-              "version": "[12.0.1, )"
-            },
-            "Microsoft.EntityFrameworkCore.Design": {
-              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
-              "suppressParent": "All",
-              "target": "Package",
-              "version": "[8.0.6, )"
-            },
-            "MongoDB.Entities": {
-              "target": "Package",
-              "version": "[23.1.0, )"
-            },
-            "Npgsql.EntityFrameworkCore.PostgreSQL": {
-              "target": "Package",
-              "version": "[8.0.4, )"
-            },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
               "version": "[6.4.0, )"
