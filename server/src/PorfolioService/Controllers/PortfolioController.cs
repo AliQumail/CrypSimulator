@@ -17,30 +17,12 @@ public class PortfolioController : ControllerBase
          return authors; 
     }
 
-    [HttpPost]
-    public async Task<ActionResult<CurrencyHolding>> UpdateUserPortfolio([FromBody] CurrencyHolding currencyHolding, bool isBuy)
-    {
-        var foundCurrencyHolding = await DB.Find<CurrencyHolding>().ManyAsync(a => a.UserId == currencyHolding.UserId && a.Name == currencyHolding.Name);
-        if ( foundCurrencyHolding != null ){
-            if (isBuy){
-                await DB.Update<CurrencyHolding>()
-                .Match(a => a.UserId == currencyHolding.UserId && a.Name == currencyHolding.Name)
-                .Modify(a => a.Quantity, foundCurrencyHolding[0].Quantity + currencyHolding.Quantity)
-                .ExecuteAsync();
-                return currencyHolding;
-            } else {
-                await DB.Update<CurrencyHolding>()
-                .Match(a => a.UserId == currencyHolding.UserId && a.Name == currencyHolding.Name)
-                .Modify(a => a.Quantity, foundCurrencyHolding[0].Quantity - currencyHolding.Quantity)
-                .ExecuteAsync();
-                return currencyHolding;
-            }
-            
-        } else {
-            await DB.SaveAsync(currencyHolding);
-            return currencyHolding;
-        };
-    }
+    // [HttpPost]
+    // public async Task<ActionResult<UpdateCurrencyHoldingDto>> UpdateUserPortfolio([FromBody] UpdateCurrencyHoldingDto updateCurrencyHoldingDto)
+    // {
+    
+    // }
+
 
     
 
