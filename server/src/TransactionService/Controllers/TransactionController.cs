@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using AutoMapper;
+using MassTransit;
 using Microsoft.AspNetCore.Mvc;
 using TransactionService.Data;
 using TransactionService.DTOs;
@@ -13,11 +14,13 @@ public class TransactionController : ControllerBase
 {
     private readonly CrypDbContext _context;
     private readonly IMapper _mapper;
+    private readonly IPublishEndpoint _publishEndpoint;
 
-    public TransactionController(IMapper mapper, CrypDbContext context)
+    public TransactionController(IMapper mapper, CrypDbContext context, IPublishEndpoint publishEndpoint)
     {
         _context = context;
         _mapper = mapper; 
+        _publishEndpoint = publishEndpoint;
     }
 
     [HttpPost]
@@ -27,6 +30,18 @@ public class TransactionController : ControllerBase
         var transaction = _mapper.Map<Transaction>(request);
         transaction.Date = DateTime.UtcNow;
         _context.Transactions.Add(transaction);
+        
+        var updateCurrencyHoldingDto = new UpdateCurrencyHoldingDto {
+            UserId = request.UserId,
+            Name = request.CurrencyName,
+            Quantity = request.Quantity,
+            Price = request.Price,
+            IsBuy = request.IsBuy
+        }; 
+        
+        await _publishEndpoint.Publish(updateCurrencyHoldingDto);
+        Console.WriteLine("DOES IT COME HERE");
+
         var result = await _context.SaveChangesAsync() > 0;
         if (!result) BadRequest("Failed to add transaciton");
         return transaction; 

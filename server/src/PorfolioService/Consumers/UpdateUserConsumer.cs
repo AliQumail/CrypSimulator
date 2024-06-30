@@ -7,12 +7,14 @@ namespace SearchService;
 public class UpdateUserConsumer : IConsumer<UpdateCurrencyHoldingDto>
 {
     public UpdateUserConsumer() { }
-
+    
     public async Task Consume(ConsumeContext<UpdateCurrencyHoldingDto> context)
     {
         // Console.WriteLine("--> Consuming auction created: " + context.Message.Id);
 
         var updateCurrencyHoldingDto = context.Message;
+        Console.WriteLine("-----------------");
+        Console.WriteLine(context.Message);
         var foundCurrencyHolding = await DB.Find<CurrencyHolding>()
         .ManyAsync(a => a.UserId == updateCurrencyHoldingDto.UserId && a.Name == updateCurrencyHoldingDto.Name);
 
@@ -34,6 +36,8 @@ public class UpdateUserConsumer : IConsumer<UpdateCurrencyHoldingDto>
                     .ExecuteAsync();
 
             }
+
+            // Update the USD amount here
         }
         else
         {
@@ -45,6 +49,8 @@ public class UpdateUserConsumer : IConsumer<UpdateCurrencyHoldingDto>
             };
 
             await DB.SaveAsync(currencyHolding);
+
+            // Update the USD amount here
 
         }
 

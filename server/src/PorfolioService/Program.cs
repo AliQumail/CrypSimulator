@@ -15,9 +15,17 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddMassTransit( x => 
 {
     x.AddConsumersFromNamespaceContaining<UpdateUserConsumer>();
-
     x.SetEndpointNameFormatter(new KebabCaseEndpointNameFormatter("porfolio", false));
+    
     x.UsingRabbitMq((context, cfg) => {
+
+        // To message consistent, if db fails 
+         cfg.ReceiveEndpoint("portfolio-update-user", e => 
+        {
+            e.UseMessageRetry(r => r.Interval(5, 5));
+            e.ConfigureConsumer<UpdateUserConsumer>(context);
+        });
+
         cfg.ConfigureEndpoints(context);
     });
 
@@ -31,8 +39,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
