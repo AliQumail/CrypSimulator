@@ -11,41 +11,40 @@ namespace PortfolioService.Controllers;
 public class PortfolioController : ControllerBase
 {
     [HttpGet]
+    [Route("GetUserPorfolio")]
     public async Task<ActionResult<List<CurrencyHolding>>> GetUserPortfolio([FromQuery] Guid UserId)
     {
          var holdings = await DB.Find<CurrencyHolding>().ManyAsync(a => a.UserId == UserId);
-         Console.WriteLine("HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH");
-         Console.WriteLine(holdings.Count);
          return holdings; 
     }
 
     [HttpPost]
-    public async Task<ActionResult<UpdateCurrencyHoldingDto>> UpdateUserPortfolio([FromBody] UpdateCurrencyHoldingDto updateCurrencyHoldingDto)
+    public async Task<ActionResult<AddTransactionDto>> UpdateUserPortfolio([FromBody] AddTransactionDto AddTransactionDto)
     {
-         // Console.WriteLine("--> Consuming auction created: " + context.Message.Id);
+        // Console.WriteLine("--> Consuming auction created: " + context.Message.Id);
         var foundCurrencyHolding = await DB.Find<CurrencyHolding>()
-        .ManyAsync(a => a.UserId == updateCurrencyHoldingDto.UserId && a.Name == updateCurrencyHoldingDto.Name);
+        .ManyAsync(a => a.UserId == AddTransactionDto.UserId && a.CurrencyName == AddTransactionDto.CurrencyName);
 
         if (foundCurrencyHolding.Count > 0)
         {
-            if (updateCurrencyHoldingDto.IsBuy)
+            if (AddTransactionDto.IsBuy)
             {
                 await DB.Update<CurrencyHolding>()
-                    .Match(a => a.UserId == updateCurrencyHoldingDto.UserId && a.Name == updateCurrencyHoldingDto.Name)
-                    .Modify(a => a.Quantity, foundCurrencyHolding[0].Quantity + updateCurrencyHoldingDto.Quantity)
+                    .Match(a => a.UserId == AddTransactionDto.UserId && a.CurrencyName == AddTransactionDto.CurrencyName)
+                    .Modify(a => a.Quantity, foundCurrencyHolding[0].Quantity + AddTransactionDto.Quantity)
                     .ExecuteAsync();
 
-                return updateCurrencyHoldingDto;
+                return AddTransactionDto;
 
             }
             else
             {
                 await DB.Update<CurrencyHolding>()
-                    .Match(a => a.UserId == updateCurrencyHoldingDto.UserId && a.Name == updateCurrencyHoldingDto.Name)
-                    .Modify(a => a.Quantity, foundCurrencyHolding[0].Quantity - updateCurrencyHoldingDto.Quantity)
+                    .Match(a => a.UserId == AddTransactionDto.UserId && a.CurrencyName == AddTransactionDto.CurrencyName)
+                    .Modify(a => a.Quantity, foundCurrencyHolding[0].Quantity - AddTransactionDto.Quantity)
                     .ExecuteAsync();
                 
-                return updateCurrencyHoldingDto;
+                return AddTransactionDto;
 
             }
 
@@ -55,14 +54,14 @@ public class PortfolioController : ControllerBase
         {
             var currencyHolding = new CurrencyHolding
             {
-                UserId = updateCurrencyHoldingDto.UserId,
-                Name = updateCurrencyHoldingDto.Name,
-                Quantity = updateCurrencyHoldingDto.Quantity
+                UserId = AddTransactionDto.UserId,
+                CurrencyName = AddTransactionDto.CurrencyName,
+                Quantity = AddTransactionDto.Quantity
             };
 
             await DB.SaveAsync(currencyHolding);
 
-            return updateCurrencyHoldingDto;
+            return AddTransactionDto;
             // Update the USD amount here
 
         }

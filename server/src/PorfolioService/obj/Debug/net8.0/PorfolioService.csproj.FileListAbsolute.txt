@@ -49,3 +49,5 @@ C:\Users\aqasy\Documents\personals\Projects\CrypSimulator\server\src\PorfolioSer
 C:\Users\aqasy\Documents\personals\Projects\CrypSimulator\server\src\PorfolioService\bin\Debug\net8.0\MassTransit.Abstractions.dll
 C:\Users\aqasy\Documents\personals\Projects\CrypSimulator\server\src\PorfolioService\bin\Debug\net8.0\MassTransit.RabbitMqTransport.dll
 C:\Users\aqasy\Documents\personals\Projects\CrypSimulator\server\src\PorfolioService\bin\Debug\net8.0\RabbitMQ.Client.dll
+C:\Users\aqasy\Documents\personals\Projects\CrypSimulator\server\src\PorfolioService\bin\Debug\net8.0\Contracts.dll
+C:\Users\aqasy\Documents\personals\Projects\CrypSimulator\server\src\PorfolioService\bin\Debug\net8.0\Contracts.pdb

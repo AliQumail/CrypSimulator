@@ -9,6 +9,7 @@
       "TransactionService/1.0.0": {
         "dependencies": {
           "AutoMapper.Extensions.Microsoft.DependencyInjection": "12.0.1",
+          "Contracts": "1.0.0",
           "MassTransit.EntityFrameworkCore": "8.2.3",
           "MassTransit.RabbitMQ": "8.2.3",
           "Microsoft.EntityFrameworkCore.Design": "8.0.6",
@@ -804,6 +805,11 @@
             "fileVersion": "0.7.3.0"
           }
         }
+      },
+      "Contracts/1.0.0": {
+        "runtime": {
+          "Contracts.dll": {}
+        }
       }
     }
   },
@@ -1351,6 +1357,11 @@
       "sha512": "sha512-U9Ix4l4cl58Kzz1rJzj5hoVTjmbx1qGMwzAcbv1j/d3NzrFaESIurQyg+ow4mivCgkE3S413y+U9k4WdnEIkRA==",
       "path": "zstdsharp.port/0.7.3",
       "hashPath": "zstdsharp.port.0.7.3.nupkg.sha512"
+    },
+    "Contracts/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
     }
   }
 }

@@ -12,8 +12,8 @@ using TransactionService.Data;
 namespace TransactionService.Data.Migrations
 {
     [DbContext(typeof(CrypDbContext))]
-    [Migration("20240629161630_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20240630155705_Outbox")]
+    partial class Outbox
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

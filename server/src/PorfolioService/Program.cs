@@ -1,7 +1,7 @@
 using MassTransit;
 using MongoDB.Driver;
 using MongoDB.Entities;
-using SearchService;
+using PorfolioService.Consumers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,7 +15,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddMassTransit( x => 
 {
     x.AddConsumersFromNamespaceContaining<UpdateUserConsumer>();
-    x.SetEndpointNameFormatter(new KebabCaseEndpointNameFormatter("porfolio", false));
+    x.SetEndpointNameFormatter(new KebabCaseEndpointNameFormatter("portfolio", false));
     
     x.UsingRabbitMq((context, cfg) => {
 
@@ -39,7 +39,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+// app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();

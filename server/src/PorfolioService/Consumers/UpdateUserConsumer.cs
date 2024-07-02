@@ -1,38 +1,35 @@
+using Contracts;
 using MassTransit;
 using MongoDB.Entities;
-using PorfolioService;
+namespace PorfolioService.Consumers;
 
-namespace SearchService;
-
-public class UpdateUserConsumer : IConsumer<UpdateCurrencyHoldingDto>
+public class UpdateUserConsumer : IConsumer<TransactionCreated>
 {
-    public UpdateUserConsumer() { }
-    
-    public async Task Consume(ConsumeContext<UpdateCurrencyHoldingDto> context)
+    public async Task Consume(ConsumeContext<TransactionCreated> context)
     {
-        // Console.WriteLine("--> Consuming auction created: " + context.Message.Id);
+        Console.WriteLine("--> Consuming auction created: " + context.Message.UserId);
 
-        var updateCurrencyHoldingDto = context.Message;
+        var TransactionCreated = context.Message;
         Console.WriteLine("-----------------");
         Console.WriteLine(context.Message);
         var foundCurrencyHolding = await DB.Find<CurrencyHolding>()
-        .ManyAsync(a => a.UserId == updateCurrencyHoldingDto.UserId && a.Name == updateCurrencyHoldingDto.Name);
+        .ManyAsync(a => a.UserId == TransactionCreated.UserId && a.CurrencyName == TransactionCreated.CurrencyName);
 
         if (foundCurrencyHolding.Count > 0)
         {
-            if (updateCurrencyHoldingDto.IsBuy)
+            if (TransactionCreated.IsBuy)
             {
                 await DB.Update<CurrencyHolding>()
-                    .Match(a => a.UserId == updateCurrencyHoldingDto.UserId && a.Name == updateCurrencyHoldingDto.Name)
-                    .Modify(a => a.Quantity, foundCurrencyHolding[0].Quantity + updateCurrencyHoldingDto.Quantity)
+                    .Match(a => a.UserId == TransactionCreated.UserId && a.CurrencyName == TransactionCreated.CurrencyName)
+                    .Modify(a => a.Quantity, foundCurrencyHolding[0].Quantity + TransactionCreated.Quantity)
                     .ExecuteAsync();
 
             }
             else
             {
                 await DB.Update<CurrencyHolding>()
-                    .Match(a => a.UserId == updateCurrencyHoldingDto.UserId && a.Name == updateCurrencyHoldingDto.Name)
-                    .Modify(a => a.Quantity, foundCurrencyHolding[0].Quantity - updateCurrencyHoldingDto.Quantity)
+                    .Match(a => a.UserId == TransactionCreated.UserId && a.CurrencyName == TransactionCreated.CurrencyName)
+                    .Modify(a => a.Quantity, foundCurrencyHolding[0].Quantity - TransactionCreated.Quantity)
                     .ExecuteAsync();
 
             }
@@ -43,9 +40,9 @@ public class UpdateUserConsumer : IConsumer<UpdateCurrencyHoldingDto>
         {
             var currencyHolding = new CurrencyHolding
             {
-                UserId = updateCurrencyHoldingDto.UserId,
-                Name = updateCurrencyHoldingDto.Name,
-                Quantity = updateCurrencyHoldingDto.Quantity
+                UserId = TransactionCreated.UserId,
+                CurrencyName = TransactionCreated.CurrencyName,
+                Quantity = TransactionCreated.Quantity
             };
 
             await DB.SaveAsync(currencyHolding);

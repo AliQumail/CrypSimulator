@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using AutoMapper;
+using Contracts;
 using MassTransit;
 using Microsoft.AspNetCore.Mvc;
 using TransactionService.Data;
@@ -30,17 +31,8 @@ public class TransactionController : ControllerBase
         var transaction = _mapper.Map<Transaction>(request);
         transaction.Date = DateTime.UtcNow;
         _context.Transactions.Add(transaction);
-        
-        var updateCurrencyHoldingDto = new UpdateCurrencyHoldingDto {
-            UserId = request.UserId,
-            Name = request.CurrencyName,
-            Quantity = request.Quantity,
-            Price = request.Price,
-            IsBuy = request.IsBuy
-        }; 
-        
-        await _publishEndpoint.Publish(updateCurrencyHoldingDto);
-        Console.WriteLine("DOES IT COME HERE");
+            
+        await _publishEndpoint.Publish(_mapper.Map<TransactionCreated>(request));
 
         var result = await _context.SaveChangesAsync() > 0;
         if (!result) BadRequest("Failed to add transaciton");
