@@ -143,4 +143,5 @@ server/src/TransactionService/bin/
 server/src/TransactionService/obj/
 bin
 obj
+.github
 
