@@ -141,4 +141,6 @@ server/src/Contracts/obj/
 
 server/src/TransactionService/bin/
 server/src/TransactionService/obj/
+bin
+obj
 
