@@ -130,3 +130,15 @@ dist
 .pnp.*
 
 client/.vscode/
+server/src/AuthService/bin
+server/src/AuthService/obj
+
+server/src/PortfolioService/bin
+server/src/PortfolioService/obj
+
+server/src/Contracts/bin
+server/src/Contracts/obj
+
+server/src/TransactionService/bin
+server/src/TransactionService/obj
+
