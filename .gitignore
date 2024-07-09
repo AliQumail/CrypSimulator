@@ -141,6 +141,10 @@ server/src/Contracts/obj/
 
 server/src/TransactionService/bin/
 server/src/TransactionService/obj/
+
+server/src/GatewayService/bin/
+server/src/GatewayService/obj/
+
 bin
 obj
 .github
