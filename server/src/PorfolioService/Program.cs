@@ -24,6 +24,7 @@ builder.Services.AddMassTransit( x =>
         {
             e.UseMessageRetry(r => r.Interval(5, 5));
             e.ConfigureConsumer<UpdateUserConsumer>(context);
+            e.ConfigureConsumer<ResetUserConsumer>(context);
         });
 
         cfg.ConfigureEndpoints(context);

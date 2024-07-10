@@ -47,4 +47,24 @@ public class TransactionController : ControllerBase
         var mappedTransactions = _mapper.Map<List<TransactionDto>>(transactions);
         return mappedTransactions; 
     }
+
+    [HttpDelete]
+    [Route("DeleteTransactionsAndResetUser")]
+    public async Task<IActionResult> DeleteTransactionsAndResetUser([FromQuery] Guid userId)
+    {
+        var transactionsToDelete = _context.Transactions.Where(t => t.UserId == userId);
+        _context.Transactions.RemoveRange(transactionsToDelete);
+
+        var userReset = new UserReset {
+            UserId = userId
+        };
+
+        await _publishEndpoint.Publish(userReset);
+
+        var result = await _context.SaveChangesAsync() > 0;
+        if (!result) BadRequest("Failed to delete transactions.");
+
+        return Ok("All transactions deleted successfully");
+
+    }
 }

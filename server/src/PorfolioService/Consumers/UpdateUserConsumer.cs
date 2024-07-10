@@ -10,8 +10,6 @@ public class UpdateUserConsumer : IConsumer<TransactionCreated>
         Console.WriteLine("--> Consuming auction created: " + context.Message.UserId);
 
         var TransactionCreated = context.Message;
-        Console.WriteLine("-----------------");
-        Console.WriteLine(context.Message);
         var foundCurrencyHolding = await DB.Find<CurrencyHolding>()
         .ManyAsync(a => a.UserId == TransactionCreated.UserId && a.CurrencyName == TransactionCreated.CurrencyName);
 
