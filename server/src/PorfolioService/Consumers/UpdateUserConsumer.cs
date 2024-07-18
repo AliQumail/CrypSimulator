@@ -15,11 +15,29 @@ public class UpdateUserConsumer : IConsumer<TransactionCreated>
 
         if (foundCurrencyHolding.Count > 0)
         {
+            if (TransactionCreated.CurrencyName == "USD"){
+                await DB.Update<CurrencyHolding>()
+                    .Match(a => a.UserId == TransactionCreated.UserId && a.CurrencyName == TransactionCreated.CurrencyName)
+                    .Modify(a => a.Quantity, TransactionCreated.Quantity)
+                    .ExecuteAsync();
+                    return;
+
+            }
+
+            var foundUSDHolding = await DB.Find<CurrencyHolding>().ManyAsync(a => a.UserId == TransactionCreated.UserId && a.CurrencyName == "USD");
+
             if (TransactionCreated.IsBuy)
             {
                 await DB.Update<CurrencyHolding>()
                     .Match(a => a.UserId == TransactionCreated.UserId && a.CurrencyName == TransactionCreated.CurrencyName)
                     .Modify(a => a.Quantity, foundCurrencyHolding[0].Quantity + TransactionCreated.Quantity)
+                    .ExecuteAsync();
+
+                Console.WriteLine("REACHED HERE");
+            
+                await DB.Update<CurrencyHolding>()
+                    .Match(a => a.UserId == TransactionCreated.UserId && a.CurrencyName == "USD")
+                    .Modify(a => a.Quantity, foundUSDHolding[0].Quantity - TransactionCreated.Price)
                     .ExecuteAsync();
 
             }
@@ -28,6 +46,11 @@ public class UpdateUserConsumer : IConsumer<TransactionCreated>
                 await DB.Update<CurrencyHolding>()
                     .Match(a => a.UserId == TransactionCreated.UserId && a.CurrencyName == TransactionCreated.CurrencyName)
                     .Modify(a => a.Quantity, foundCurrencyHolding[0].Quantity - TransactionCreated.Quantity)
+                    .ExecuteAsync();
+                
+                await DB.Update<CurrencyHolding>()
+                    .Match(a => a.UserId == TransactionCreated.UserId && a.CurrencyName == "USD")
+                    .Modify(a => a.Quantity, foundUSDHolding[0].Quantity + TransactionCreated.Price)
                     .ExecuteAsync();
 
             }
@@ -42,6 +65,25 @@ public class UpdateUserConsumer : IConsumer<TransactionCreated>
                 CurrencyName = TransactionCreated.CurrencyName,
                 Quantity = TransactionCreated.Quantity
             };
+
+            if (TransactionCreated.CurrencyName != "USD")
+            {
+                var foundUSDHolding = await DB.Find<CurrencyHolding>().ManyAsync(a => a.UserId == TransactionCreated.UserId && a.CurrencyName == "USD");
+                if (TransactionCreated.IsBuy){
+                    await DB.Update<CurrencyHolding>()
+                    .Match(a => a.UserId == TransactionCreated.UserId && a.CurrencyName == "USD")
+                    .Modify(a => a.Quantity, foundUSDHolding[0].Quantity - TransactionCreated.Price)
+                    .ExecuteAsync();
+                } 
+                else 
+                {
+                    await DB.Update<CurrencyHolding>()
+                    .Match(a => a.UserId == TransactionCreated.UserId && a.CurrencyName == "USD")
+                    .Modify(a => a.Quantity, foundUSDHolding[0].Quantity + TransactionCreated.Price)
+                    .ExecuteAsync();
+
+                }
+            }
 
             await DB.SaveAsync(currencyHolding);
 
