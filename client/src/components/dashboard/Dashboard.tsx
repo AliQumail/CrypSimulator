@@ -40,7 +40,7 @@ export default function User() {
   const USER_ID = 'b366d3cb-26ef-43b1-b2eb-89ecb7bff869'
   const GetTransactionsByUser = async () => {
     try {
-      const response = await fetch("http://localhost:5146/Transaction/GetTransactionsByUser?userId=b366d3cb-26ef-43b1-b2eb-89ecb7bff869");
+      const response = await fetch(URL + "Transaction/GetTransactionsByUser?userId=b366d3cb-26ef-43b1-b2eb-89ecb7bff869");
       if (response.ok){
         const data = await response.json();
         console.log(data);
