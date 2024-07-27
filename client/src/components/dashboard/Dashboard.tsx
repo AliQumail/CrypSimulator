@@ -5,6 +5,7 @@ import SellModal from "./components/modals/SellModal";
 import axios from 'axios';
 import { URL, USER_ID } from "../../constants";
 import ShowTransactions from "./components/showTransactions/ShowTransactions";
+import ShowUserProfile from "./components/showUserProfile/ShowUserProfile";
 
 interface ITransaction {
   id: string
@@ -22,6 +23,12 @@ interface IUserCurrencyHoldings {
   amount: number 
 }
 
+enum ScreenTypes {
+  ShowTransactions = "ShowTransactions",
+  ShowUserProfile = "ShowUserProfile",
+  ShowCurrencies = "ShowCurrencies"
+}
+
 export default function User() {
   const amount = 0;
 
@@ -37,6 +44,8 @@ export default function User() {
   const [pastData, setpastData] = useState({});
   const ws: any = useRef(null);
   const [records, setRecords] = useState([]);
+
+  const[currentScreenType, setCurrentScreenType] = useState(ScreenTypes.ShowCurrencies);
 
   const GetUserBalance = async () => {
     try {
@@ -203,6 +212,12 @@ export default function User() {
     }
   };
 
+  const handleScreenType = (currentScreenType: any) => {
+    console.log("/----/");
+    console.log(currentScreenType);
+    setCurrentScreenType(currentScreenType);
+  }
+
   return (
     <div className="container mx-auto">
       <div className="grid grid-cols-12 gap-4">
@@ -231,12 +246,15 @@ export default function User() {
 
         </div>
         <div className="col-span-9">
-          <button onClick={handleShowTransactions} type="button">
-            {showTransactions ? "Show graph" : "Show transactions"}
-          </button>
-          {showTransactions ? (
-            <ShowTransactions transactions={transactions} />
-          ) : (
+          <button onClick={() => handleScreenType(ScreenTypes.ShowCurrencies)} type="button">Currencies</button>
+          <button onClick={() => handleScreenType(ScreenTypes.ShowTransactions)} type="button">Transactions</button>
+          <button onClick={() => handleScreenType(ScreenTypes.ShowUserProfile)} type="button">User Profile</button>
+          
+          { currentScreenType === ScreenTypes.ShowTransactions &&
+           <ShowTransactions transactions={transactions} />
+          } 
+          {
+            currentScreenType === ScreenTypes.ShowCurrencies &&
             <div>
               <h4>Current Balance: $ {currentBalance.toLocaleString()} </h4>
               {
@@ -253,7 +271,12 @@ export default function User() {
               price {price}
               {/* <HistoryChart price={price} data={pastData} />       */}
             </div>
-          )}
+          }
+
+          { currentScreenType === ScreenTypes.ShowUserProfile &&
+           <ShowUserProfile />
+          } 
+          
         </div>
       </div>
     </div>
