@@ -4,6 +4,7 @@ import BuyModal from "./components/modals/BuyModal";
 import SellModal from "./components/modals/SellModal";
 import axios from 'axios';
 import { URL, USER_ID } from "../../constants";
+import ShowTransactions from "./components/showTransactions/ShowTransactions";
 
 interface ITransaction {
   id: string
@@ -22,7 +23,7 @@ interface IUserCurrencyHoldings {
 }
 
 export default function User() {
-  const amount = 10000;
+  const amount = 0;
 
   const [currentBalance, setcurrentBalance] = useState(amount);
   const [transactions, setTransactions] = useState<ITransaction[]>([]);
@@ -37,17 +38,21 @@ export default function User() {
   const ws: any = useRef(null);
   const [records, setRecords] = useState([]);
 
-  const GetTransactionsByUser = async () => {
+  const GetUserBalance = async () => {
     try {
-      const response = await fetch(URL + "Transaction/GetTransactionsByUser?userId=" +  USER_ID);
-      if (response.ok){
+      const response = await fetch(
+        URL + "Portfolio/GetUserUSDBalance?userId=" + USER_ID
+      );
+      
+
+      if (response.ok) {
         const data = await response.json();
-        console.log(data);
-        setTransactions(data);
-        console.log(transactions);
+        console.log("data.price");
+        console.log(data.quantity);
+        setcurrentBalance(data.quantity);
       }
     } catch (error) {
-      console.error('Fetch error:', error);
+      console.error("Fetch error:", error);
     }
   };
 
@@ -63,7 +68,8 @@ export default function User() {
   const url = "https://api.pro.coinbase.com";
 
   useEffect(() => {
-    GetTransactionsByUser(); 
+    GetTransactionsByUser();
+    GetUserBalance();
     ws.current = new WebSocket("wss://ws-feed.pro.coinbase.com");
 
     let pairs: any = [];
@@ -183,6 +189,20 @@ export default function User() {
     setShowTransactions((prevVal) => !prevVal);
   };
 
+  const GetTransactionsByUser = async () => {
+    try {
+      const response = await fetch(URL + "Transaction/GetTransactionsByUser?userId=" +  USER_ID);
+      if (response.ok){
+        const data = await response.json();
+        console.log(data);
+        setTransactions(data);
+        console.log(transactions);
+      }
+    } catch (error) {
+      console.error('Fetch error:', error);
+    }
+  };
+
   return (
     <div className="container mx-auto">
       <div className="grid grid-cols-12 gap-4">
@@ -215,35 +235,10 @@ export default function User() {
             {showTransactions ? "Show graph" : "Show transactions"}
           </button>
           {showTransactions ? (
-            <div className="relative overflow-x-auto">
-            <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-            <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-              <tr>
-                <th>Currency</th>
-                <th>Quantity</th>
-                <th>Price</th>
-                <th>Action</th>
-                <th>Date</th>
-              </tr>
-            </thead>
-            <tbody>
-              {
-                transactions.map((tran) => {
-                  return  <tr>
-                  <td>{tran.currencyName}</td>
-                  <td>{tran.quantity}</td>
-                  <td>{tran.price}</td>
-                  <td>{tran.isBuy ? 'Bought': 'Sold'}</td>
-                  <td>{tran.date.toString()}</td>
-                </tr>
-                })
-              }
-            </tbody>
-          </table>
-          </div>
+            <ShowTransactions transactions={transactions} />
           ) : (
             <div>
-              <h4>Current Balance: {currentBalance} </h4>
+              <h4>Current Balance: $ {currentBalance.toLocaleString()} </h4>
               {
                 <select name="currency" value={pair} onChange={handleSelect}>
                   {currencies.map((cur: any, idx: number) => {
