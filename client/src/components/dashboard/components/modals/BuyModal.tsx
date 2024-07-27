@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { URL, USER_ID } from "../../../../constants";
 
 const BuyModal = ({ price, currencyName, currentBalance, transactions, setTransactions, setCurrentBalance }: any) => {
   const [showModal, setShowModal] = useState(false);
@@ -30,14 +31,14 @@ const BuyModal = ({ price, currencyName, currentBalance, transactions, setTransa
         setCurrentBalance(currentBalance- Number(totalPrice));
         const newTransaction: any = {
             currencyName: currencyName,
-            quantity: quantity,
-            price: Number(totalPrice),
-            date: new Date(),
+            quantity: Number(quantity),
+            price: totalPrice,
             isBuy: true,
+            userId: USER_ID
         };
 
          // API Call here 
-         fetch('http://localhost:5146/Transaction/AddTransaction', {
+         fetch(URL + 'Transaction/AddTransaction', {
           method: 'POST',
           headers: {
               'Content-Type': 'application/json',
@@ -114,7 +115,7 @@ const BuyModal = ({ price, currencyName, currentBalance, transactions, setTransa
                           Quantity
                         </label>
                         <input
-                          type="text"
+                          type="number"
                           value={quantity}
                           onChange={handleQuantity}
                           id="default-input"
@@ -126,7 +127,7 @@ const BuyModal = ({ price, currencyName, currentBalance, transactions, setTransa
                           Price
                         </label>
                         <input
-                          type="text"
+                          type="number"
                           id="default-input"
                           value={totalPrice}
                           onChange={handleTotalPrice}

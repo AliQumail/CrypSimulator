@@ -18,6 +18,15 @@ public class PortfolioController : ControllerBase
          return holdings; 
     }
 
+    [HttpGet]
+    [Route("GetUserUSDBalance")]
+    public async Task<ActionResult<CurrencyHolding>?> GetUserUSDAmount([FromQuery] Guid UserId)
+    {
+        var holdings = await DB.Find<CurrencyHolding>().ManyAsync(a => a.UserId == UserId && a.CurrencyName == "USD");
+        if (holdings.Count > 0) return holdings[0];
+        else return null;
+    }
+
     [HttpPost]
     public async Task<ActionResult<AddTransactionDto>> UpdateUserPortfolio([FromBody] AddTransactionDto AddTransactionDto)
     {

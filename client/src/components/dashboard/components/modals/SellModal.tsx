@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import { URL, USER_ID } from "../../../../constants";
 
 const SellModal = ({ price, currencyName, currentBalance, transactions, setTransactions, setCurrentBalance }: any) => {
   const [showModal, setShowModal] = useState(false);
@@ -31,12 +32,12 @@ const SellModal = ({ price, currencyName, currentBalance, transactions, setTrans
         const newTransaction: any = {
             currencyName: currencyName,
             quantity: quantity,
-            price: Number(totalPrice),
-            date: new Date(),
+            price: totalPrice,
             isBuy: false,
+            userId: USER_ID
         };
 
-        fetch('http://localhost:5146/Transaction/AddTransaction', {
+        fetch(URL + 'Transaction/AddTransaction', {
           method: 'POST',
           headers: {
               'Content-Type': 'application/json',
@@ -111,7 +112,7 @@ const SellModal = ({ price, currencyName, currentBalance, transactions, setTrans
                           Quantity
                         </label>
                         <input
-                          type="text"
+                          type="number"
                           value={quantity}
                           onChange={handleQuantity}
                           id="default-input"
@@ -123,7 +124,7 @@ const SellModal = ({ price, currencyName, currentBalance, transactions, setTrans
                           Price
                         </label>
                         <input
-                          type="text"
+                          type="number"
                           id="default-input"
                           value={totalPrice}
                           onChange={handleTotalPrice}
@@ -144,7 +145,7 @@ const SellModal = ({ price, currencyName, currentBalance, transactions, setTrans
                   disabled={price <= 0}
                   className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm"
                 >
-                  Buy
+                  Sell
                 </button>
                 <button
                   onClick={handleClose}

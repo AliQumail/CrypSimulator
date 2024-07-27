@@ -3,7 +3,7 @@ import { formatData } from "../../utils";
 import BuyModal from "./components/modals/BuyModal";
 import SellModal from "./components/modals/SellModal";
 import axios from 'axios';
-import { URL } from "../../constants";
+import { URL, USER_ID } from "../../constants";
 
 interface ITransaction {
   id: string
@@ -37,10 +37,9 @@ export default function User() {
   const ws: any = useRef(null);
   const [records, setRecords] = useState([]);
 
-  const USER_ID = 'b366d3cb-26ef-43b1-b2eb-89ecb7bff869'
   const GetTransactionsByUser = async () => {
     try {
-      const response = await fetch(URL + "Transaction/GetTransactionsByUser?userId=b366d3cb-26ef-43b1-b2eb-89ecb7bff869");
+      const response = await fetch(URL + "Transaction/GetTransactionsByUser?userId=" +  USER_ID);
       if (response.ok){
         const data = await response.json();
         console.log(data);
