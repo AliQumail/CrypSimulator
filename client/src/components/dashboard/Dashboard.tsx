@@ -2,31 +2,31 @@ import { useState, useEffect, useRef } from "react";
 import { formatData } from "../../utils";
 import BuyModal from "./components/modals/BuyModal";
 import SellModal from "./components/modals/SellModal";
-import axios from 'axios';
+import axios from "axios";
 import { URL, USER_ID } from "../../constants";
 import ShowTransactions from "./components/showTransactions/ShowTransactions";
-import ShowUserProfile from "./components/showUserProfile/ShowUserProfile";
+import ShowUserPortfolio from "./components/showUserPortfolio/ShowUserPortfolio";
 
 interface ITransaction {
-  id: string
+  id: string;
   currencyName: string;
   quantity: number;
   price: number;
   isBuy: boolean;
   date: Date;
-  userId: string
+  userId: string;
 }
 
 interface IUserCurrencyHoldings {
-  userId: string, 
-  currencyName: string, 
-  amount: number 
+  userId: string;
+  currencyName: string;
+  amount: number;
 }
 
 enum ScreenTypes {
   ShowTransactions = "ShowTransactions",
-  ShowUserProfile = "ShowUserProfile",
-  ShowCurrencies = "ShowCurrencies"
+  ShowUserPortfolio = "ShowUserPortfolio",
+  ShowCurrencies = "ShowCurrencies",
 }
 
 export default function User() {
@@ -34,9 +34,10 @@ export default function User() {
 
   const [currentBalance, setcurrentBalance] = useState(amount);
   const [transactions, setTransactions] = useState<ITransaction[]>([]);
-  const [userCurrencyHoldings, setUserCurrencyHoldings] = useState<IUserCurrencyHoldings[]>([]);
+  const [userCurrencyHoldings, setUserCurrencyHoldings] = useState<
+    IUserCurrencyHoldings[]
+  >([]);
 
- 
   const [currencies, setcurrencies] = useState([]);
   const [pair, setpair] = useState("");
   const [price, setprice] = useState("0.00"); // my code
@@ -45,14 +46,15 @@ export default function User() {
   const ws: any = useRef(null);
   const [records, setRecords] = useState([]);
 
-  const[currentScreenType, setCurrentScreenType] = useState(ScreenTypes.ShowCurrencies);
+  const [currentScreenType, setCurrentScreenType] = useState(
+    ScreenTypes.ShowCurrencies
+  );
 
   const GetUserBalance = async () => {
     try {
       const response = await fetch(
         URL + "Portfolio/GetUserUSDBalance?userId=" + USER_ID
       );
-      
 
       if (response.ok) {
         const data = await response.json();
@@ -69,7 +71,7 @@ export default function User() {
     let newRecords: any = records.map((obj: any) => {
       return { ...obj, latestPrice: 20 };
     });
-  
+
     setRecords(newRecords);
   };
 
@@ -136,7 +138,7 @@ export default function User() {
 
     ws.current.onmessage = (e: any) => {
       let newData = JSON.parse(e.data);
-   
+
       // if (newData.productId === "BTC-USD") {
       //   setBtcPrice(newData.price);
       // }
@@ -161,14 +163,14 @@ export default function User() {
     };
 
     let historicalDataURL = `${url}/products/${pair}/candles?granularity=86400`;
-  
+
     const fetchHistoricalData = async () => {
       let dataArr: any = [];
       await fetch(historicalDataURL)
         .then((res) => res.json())
         .then((data) => {
           dataArr = data;
-        
+
           let formattedData = formatData(dataArr);
           setpastData(formattedData);
         });
@@ -200,15 +202,17 @@ export default function User() {
 
   const GetTransactionsByUser = async () => {
     try {
-      const response = await fetch(URL + "Transaction/GetTransactionsByUser?userId=" +  USER_ID);
-      if (response.ok){
+      const response = await fetch(
+        URL + "Transaction/GetTransactionsByUser?userId=" + USER_ID
+      );
+      if (response.ok) {
         const data = await response.json();
         console.log(data);
         setTransactions(data);
         console.log(transactions);
       }
     } catch (error) {
-      console.error('Fetch error:', error);
+      console.error("Fetch error:", error);
     }
   };
 
@@ -216,13 +220,18 @@ export default function User() {
     console.log("/----/");
     console.log(currentScreenType);
     setCurrentScreenType(currentScreenType);
-  }
+  };
 
   return (
     <div className="container mx-auto">
       <div className="grid grid-cols-12 gap-4">
         <div className="col-span-3">
-          <BuyModal
+          
+        </div>
+      </div>
+      <div className="grid grid-cols-12 gap-4">
+        <div className="col-span-3">
+          {/* <BuyModal
             price={price}
             currencyName={productId}
             currentBalance={currentBalance}
@@ -230,7 +239,7 @@ export default function User() {
             setTransactions={setTransactions}
             setCurrentBalance={setcurrentBalance}
           />
-          
+
           <SellModal
             price={price}
             currencyName={productId}
@@ -240,21 +249,116 @@ export default function User() {
             setCurrentBalance={setcurrentBalance}
             userCurrencyHoldings={userCurrencyHoldings}
             setUserCurrencyHoldings={setUserCurrencyHoldings}
-          />
-
-          
+          /> */}
+          <div className="card border-left-primary shadow h-100 py-2 mt-4">
+            <div className="card-body">
+              <div className="row no-gutters align-items-center">
+                <div className="col m-3">
+                  <div className="text-lg text-blue-800 font-weight-bold text-uppercase mb-1">
+                    Initial Balance
+                  </div>
+                  <div className="h5 mb-0 font-weight-bold text-gray-800">
+                    20000
+                  </div>
+                </div>
+                <div className="col-auto">
+                  <i className="fas fa-calendar fa-2x text-gray-300"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="card border-left-primary shadow h-100 py-2 mt-4">
+            <div className="card-body">
+              <div className="row no-gutters align-items-center">
+                <div className="col m-3">
+                  <div className="text-lg text-blue-800 font-weight-bold text-uppercase mb-1">
+                    Current Balance
+                  </div>
+                  <div className="h5 mb-0 font-weight-bold text-gray-800">
+                    20000
+                  </div>
+                </div>
+                <div className="col-auto">
+                  <i className="fas fa-calendar fa-2x text-gray-300"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="card border-left-primary shadow h-100 py-2 mt-4">
+            <div className="card-body">
+              <div className="row no-gutters align-items-center">
+                <div className="col m-3">
+                  <div className="text-lg text-blue-800 font-weight-bold text-uppercase mb-1">
+                    Profit
+                  </div>
+                  <div className="h5 mb-0 font-weight-bold text-gray-800">
+                    20000
+                  </div>
+                </div>
+                <div className="col-auto">
+                  <i className="fas fa-calendar fa-2x text-gray-300"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="card border-left-primary shadow h-100 py-2 mt-4">
+            <div className="card-body">
+              <div className="row no-gutters align-items-center">
+                <div className="col m-3">
+                  <div className="text-lg text-blue-800 font-weight-bold text-uppercase mb-1">
+                    Profit %
+                  </div>
+                  <div className="h5 mb-0 font-weight-bold text-gray-800">
+                    20000
+                  </div>
+                </div>
+                <div className="col-auto">
+                  <i className="fas fa-calendar fa-2x text-gray-300"></i>
+                </div>
+              </div>
+            </div>
+          </div>
 
         </div>
         <div className="col-span-9">
-          <button onClick={() => handleScreenType(ScreenTypes.ShowCurrencies)} type="button">Currencies</button>
-          <button onClick={() => handleScreenType(ScreenTypes.ShowTransactions)} type="button">Transactions</button>
-          <button onClick={() => handleScreenType(ScreenTypes.ShowUserProfile)} type="button">User Profile</button>
-          
-          { currentScreenType === ScreenTypes.ShowTransactions &&
-           <ShowTransactions transactions={transactions} />
-          } 
-          {
-            currentScreenType === ScreenTypes.ShowCurrencies &&
+          <div className="text-md font-medium text-center text-black-500 border-b border-black-200 dark:text-black-400 dark:border-black-700">
+            <ul className="flex flex-wrap -mb-px mb-5">
+              <li className="me-2">
+                <button
+                  onClick={() => handleScreenType(ScreenTypes.ShowCurrencies)}
+                  type="button"
+                  className="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-blue-900 hover:border-blue-500 dark:hover:text-blue-500"
+                >
+                  Currencies
+                </button>
+              </li>
+              <li className="me-2">
+                <button
+                  onClick={() => handleScreenType(ScreenTypes.ShowTransactions)}
+                  type="button"
+                  className="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-blue-900 hover:border-blue-500 dark:hover:text-blue-500"
+                >
+                  Transactions
+                </button>
+              </li>
+              <li className="me-2">
+                <button
+                  onClick={() =>
+                    handleScreenType(ScreenTypes.ShowUserPortfolio)
+                  }
+                  type="button"
+                  className="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-blue-900 hover:border-blue-500 dark:hover:text-blue-500"
+                >
+                  User Portfolio
+                </button>
+              </li>
+            </ul>
+          </div>
+
+          {currentScreenType === ScreenTypes.ShowTransactions && (
+            <ShowTransactions transactions={transactions} />
+          )}
+          {currentScreenType === ScreenTypes.ShowCurrencies && (
             <div>
               <h4>Current Balance: $ {currentBalance.toLocaleString()} </h4>
               {
@@ -271,12 +375,11 @@ export default function User() {
               price {price}
               {/* <HistoryChart price={price} data={pastData} />       */}
             </div>
-          }
+          )}
 
-          { currentScreenType === ScreenTypes.ShowUserProfile &&
-           <ShowUserProfile />
-          } 
-          
+          {currentScreenType === ScreenTypes.ShowUserPortfolio && (
+            <ShowUserPortfolio />
+          )}
         </div>
       </div>
     </div>

@@ -9,6 +9,7 @@ public class CrypDbContext: DbContext
 {
     public CrypDbContext(DbContextOptions options): base(options) {}
     public DbSet<Transaction> Transactions { get; set; }
+    public DbSet<UserBalance> UserBalance { get; set; }
 
 
     // To create an outbox to store data to avoid data inconsistency between services
