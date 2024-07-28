@@ -36,6 +36,13 @@ public class TransactionController : ControllerBase
             
         await _publishEndpoint.Publish(_mapper.Map<TransactionCreated>(request));
 
+        var userBalance = await _context.UserBalance.FirstOrDefaultAsync(u => u.UserId == request.UserId);
+        if (userBalance != null ) 
+        {
+            if (request.IsBuy) userBalance.CurrentBalance -= request.Price;
+            else userBalance.CurrentBalance += request.Price;
+        }
+
         var result = await _context.SaveChangesAsync() > 0;
         if (!result) BadRequest("Failed to add transaciton");
         return transaction; 
@@ -56,6 +63,9 @@ public class TransactionController : ControllerBase
     {
         var transactionsToDelete = _context.Transactions.Where(t => t.UserId == userId);
         _context.Transactions.RemoveRange(transactionsToDelete);
+
+        var userBalanceToRemove = await _context.UserBalance.FirstOrDefaultAsync(u => u.UserId == userId);
+        if (userBalanceToRemove != null) _context.UserBalance.Remove(userBalanceToRemove);
 
         var userReset = new UserReset {
             UserId = userId

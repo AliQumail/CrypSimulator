@@ -10,18 +10,15 @@ const SelectBalance = () => {
   async function handleSelectBalance(selectedAmount: number) {
     console.log(selectedAmount);
 
-    const postData = await fetch(URL + "Transaction/AddTransaction", {
+    const postData = await fetch(URL + "Transaction/AddUserBalance", {
       method: "POST",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        currencyName: "USD",
-        quantity: selectedAmount,
-        price: selectedAmount,
-        isBuy: true,
         userId: USER_ID,
+        initialBalance: selectedAmount
       }),
     });
     if (postData) {
@@ -44,7 +41,7 @@ const SelectBalance = () => {
   const CheckExistingUSDBalance = async () => {
     try {
       const response = await fetch(
-        URL + "Portfolio/GetUserUSDBalance?userId=" + USER_ID
+        URL + "Transaction/GetUserBalance?userId=" + USER_ID
       );
       console.log("response");
 

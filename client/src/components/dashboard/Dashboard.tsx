@@ -32,7 +32,10 @@ enum ScreenTypes {
 export default function User() {
   const amount = 0;
 
+  const [initialBalance, setInitialBalance] = useState(amount);
   const [currentBalance, setcurrentBalance] = useState(amount);
+
+
   const [transactions, setTransactions] = useState<ITransaction[]>([]);
   const [userCurrencyHoldings, setUserCurrencyHoldings] = useState<
     IUserCurrencyHoldings[]
@@ -53,14 +56,13 @@ export default function User() {
   const GetUserBalance = async () => {
     try {
       const response = await fetch(
-        URL + "Portfolio/GetUserUSDBalance?userId=" + USER_ID
+        URL + "Transaction/GetUserBalance?userId=" + USER_ID
       );
 
       if (response.ok) {
         const data = await response.json();
-        console.log("data.price");
-        console.log(data.quantity);
-        setcurrentBalance(data.quantity);
+        setcurrentBalance(data.currentBalance);
+        setInitialBalance(data.initialBalance);
       }
     } catch (error) {
       console.error("Fetch error:", error);
@@ -231,25 +233,6 @@ export default function User() {
       </div>
       <div className="grid grid-cols-12 gap-4">
         <div className="col-span-3">
-          {/* <BuyModal
-            price={price}
-            currencyName={productId}
-            currentBalance={currentBalance}
-            transactions={transactions}
-            setTransactions={setTransactions}
-            setCurrentBalance={setcurrentBalance}
-          />
-
-          <SellModal
-            price={price}
-            currencyName={productId}
-            currentBalance={currentBalance}
-            transactions={transactions}
-            setTransactions={setTransactions}
-            setCurrentBalance={setcurrentBalance}
-            userCurrencyHoldings={userCurrencyHoldings}
-            setUserCurrencyHoldings={setUserCurrencyHoldings}
-          /> */}
           <div className="card border-left-primary shadow h-100 py-2 mt-4">
             <div className="card-body">
               <div className="row no-gutters align-items-center">
@@ -258,7 +241,7 @@ export default function User() {
                     Initial Balance
                   </div>
                   <div className="h5 mb-0 font-weight-bold text-gray-800">
-                    20000
+                    $ {initialBalance.toLocaleString()}
                   </div>
                 </div>
                 <div className="col-auto">
@@ -275,7 +258,7 @@ export default function User() {
                     Current Balance
                   </div>
                   <div className="h5 mb-0 font-weight-bold text-gray-800">
-                    20000
+                    $ {currentBalance.toLocaleString()}
                   </div>
                 </div>
                 <div className="col-auto">
@@ -292,7 +275,7 @@ export default function User() {
                     Profit
                   </div>
                   <div className="h5 mb-0 font-weight-bold text-gray-800">
-                    20000
+                    {currentBalance - initialBalance}
                   </div>
                 </div>
                 <div className="col-auto">
@@ -309,7 +292,7 @@ export default function User() {
                     Profit %
                   </div>
                   <div className="h5 mb-0 font-weight-bold text-gray-800">
-                    20000
+                  {(currentBalance / initialBalance)-1} %
                   </div>
                 </div>
                 <div className="col-auto">
@@ -360,7 +343,27 @@ export default function User() {
           )}
           {currentScreenType === ScreenTypes.ShowCurrencies && (
             <div>
-              <h4>Current Balance: $ {currentBalance.toLocaleString()} </h4>
+              <div>
+              <BuyModal
+            price={price}
+            currencyName={productId}
+            currentBalance={currentBalance}
+            transactions={transactions}
+            setTransactions={setTransactions}
+            setCurrentBalance={setcurrentBalance}
+          />
+
+          <SellModal
+            price={price}
+            currencyName={productId}
+            currentBalance={currentBalance}
+            transactions={transactions}
+            setTransactions={setTransactions}
+            setCurrentBalance={setcurrentBalance}
+            userCurrencyHoldings={userCurrencyHoldings}
+            setUserCurrencyHoldings={setUserCurrencyHoldings}
+          />
+              </div>
               {
                 <select name="currency" value={pair} onChange={handleSelect}>
                   {currencies.map((cur: any, idx: number) => {
