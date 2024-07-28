@@ -12,8 +12,8 @@ using TransactionService.Data;
 namespace TransactionService.Data.Migrations
 {
     [DbContext(typeof(CrypDbContext))]
-    [Migration("20240630155705_Outbox")]
-    partial class Outbox
+    [Migration("20240728160428_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -223,6 +223,26 @@ namespace TransactionService.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Transactions");
+                });
+
+            modelBuilder.Entity("TransactionService.Entities.UserBalance", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<double>("CurrentBalance")
+                        .HasColumnType("double precision");
+
+                    b.Property<double>("InitialBalance")
+                        .HasColumnType("double precision");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("UserBalance");
                 });
 #pragma warning restore 612, 618
         }

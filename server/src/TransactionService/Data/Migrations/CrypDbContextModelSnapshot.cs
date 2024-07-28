@@ -221,6 +221,26 @@ namespace TransactionService.Data.Migrations
 
                     b.ToTable("Transactions");
                 });
+
+            modelBuilder.Entity("TransactionService.Entities.UserBalance", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<double>("CurrentBalance")
+                        .HasColumnType("double precision");
+
+                    b.Property<double>("InitialBalance")
+                        .HasColumnType("double precision");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("UserBalance");
+                });
 #pragma warning restore 612, 618
         }
     }
