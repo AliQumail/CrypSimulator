@@ -6,6 +6,7 @@ import axios from "axios";
 import { URL, USER_ID } from "../../constants";
 import ShowTransactions from "./components/showTransactions/ShowTransactions";
 import ShowUserPortfolio from "./components/showUserPortfolio/ShowUserPortfolio";
+import HistoryChart from "./components/chart/HistoryChart";
 
 interface ITransaction {
   id: string;
@@ -225,7 +226,7 @@ export default function User() {
   };
 
   return (
-    <div className="container mx-auto">
+    <div className="container mx-auto px-10 mt-5">
       <div className="grid grid-cols-12 gap-4">
         <div className="col-span-3">
           
@@ -310,18 +311,25 @@ export default function User() {
                 <button
                   onClick={() => handleScreenType(ScreenTypes.ShowCurrencies)}
                   type="button"
-                  className="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-blue-900 hover:border-blue-500 dark:hover:text-blue-500"
+                  className={`inline-block p-4 border-b-2 rounded-t-lg ${
+                    currentScreenType === ScreenTypes.ShowCurrencies
+                      ? 'text-red-900 border-red-500'
+                      : 'border-transparent hover:text-red-900 hover:border-red-500'
+                  } dark:hover:text-red-500`} 
                 >
-                  Currencies
+                  TRADE
                 </button>
               </li>
               <li className="me-2">
                 <button
                   onClick={() => handleScreenType(ScreenTypes.ShowTransactions)}
                   type="button"
-                  className="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-blue-900 hover:border-blue-500 dark:hover:text-blue-500"
-                >
-                  Transactions
+                  className={`inline-block p-4 border-b-2 rounded-t-lg ${
+                    currentScreenType === ScreenTypes.ShowTransactions
+                      ? 'text-red-900 border-red-500'
+                      : 'border-transparent hover:text-red-900 hover:border-red-500'
+                  } dark:hover:text-red-500`} >
+                  TRANSACTIONS
                 </button>
               </li>
               <li className="me-2">
@@ -330,11 +338,14 @@ export default function User() {
                     handleScreenType(ScreenTypes.ShowUserPortfolio)
                   }
                   type="button"
-                  className="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-blue-900 hover:border-blue-500 dark:hover:text-blue-500"
-                >
-                  User Portfolio
+                  className={`inline-block p-4 border-b-2 rounded-t-lg ${
+                    currentScreenType === ScreenTypes.ShowUserPortfolio
+                      ? 'text-red-900 border-red-500'
+                      : 'border-transparent hover:text-red-900 hover:border-red-500'
+                  } dark:hover:text-red-500`} >
+                  PORTFOLIO
                 </button>
-              </li>
+               </li>
             </ul>
           </div>
 
