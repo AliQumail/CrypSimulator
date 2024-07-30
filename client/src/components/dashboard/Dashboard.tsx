@@ -7,6 +7,8 @@ import { URL, USER_ID } from "../../constants";
 import ShowTransactions from "./components/showTransactions/ShowTransactions";
 import ShowUserPortfolio from "./components/showUserPortfolio/ShowUserPortfolio";
 import HistoryChart from "./components/chart/HistoryChart";
+import ResetModal from "./components/modals/ResetModal";
+
 
 interface ITransaction {
   id: string;
@@ -302,6 +304,11 @@ export default function User() {
               </div>
             </div>
           </div>
+          <div>
+          <ResetModal/>
+          </div>
+
+          
 
         </div>
         <div className="col-span-9">
@@ -374,6 +381,8 @@ export default function User() {
             userCurrencyHoldings={userCurrencyHoldings}
             setUserCurrencyHoldings={setUserCurrencyHoldings}
           />
+
+          
               </div>
               {
                 <select name="currency" value={pair} onChange={handleSelect}>
