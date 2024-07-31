@@ -20,6 +20,13 @@ interface ITransaction {
   userId: string;
 }
 
+interface IUserPortfolio {
+  userId: string,
+  currencyName: string,
+  quantity: number, 
+  id: string
+}
+
 interface IUserCurrencyHoldings {
   userId: string;
   currencyName: string;
@@ -40,6 +47,8 @@ export default function User() {
 
 
   const [transactions, setTransactions] = useState<ITransaction[]>([]);
+  const [userPortfolio, setUserPortfolio] = useState<IUserPortfolio[]>([]);
+
   const [userCurrencyHoldings, setUserCurrencyHoldings] = useState<
     IUserCurrencyHoldings[]
   >([]);
@@ -83,9 +92,23 @@ export default function User() {
   let first = useRef(false);
   const url = "https://api.pro.coinbase.com";
 
+  const GetUserPortfolio = async () => {
+    try {
+      const response = await fetch(URL + "Portfolio/GetUserPorfolio?userId=" + USER_ID);
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data);
+        setUserPortfolio(data);
+      }
+    } catch (error) {
+      console.error('Fetch error:', error);
+    }
+  };
+
   useEffect(() => {
     GetTransactionsByUser();
     GetUserBalance();
+    GetUserPortfolio();
     ws.current = new WebSocket("wss://ws-feed.pro.coinbase.com");
 
     let pairs: any = [];
@@ -227,6 +250,8 @@ export default function User() {
     setCurrentScreenType(currentScreenType);
   };
 
+  const profit = (currentBalance - initialBalance).toLocaleString();
+
   return (
     <div className="container mx-auto px-10 mt-5">
       <div className="grid grid-cols-12 gap-4">
@@ -241,7 +266,7 @@ export default function User() {
               <div className="row no-gutters align-items-center">
                 <div className="col m-3">
                   <div className="text-lg text-blue-800 font-weight-bold text-uppercase mb-1">
-                    Initial Balance
+                    INITIAL BALANCE
                   </div>
                   <div className="h5 mb-0 font-weight-bold text-gray-800">
                     $ {initialBalance.toLocaleString()}
@@ -258,7 +283,7 @@ export default function User() {
               <div className="row no-gutters align-items-center">
                 <div className="col m-3">
                   <div className="text-lg text-blue-800 font-weight-bold text-uppercase mb-1">
-                    Current Balance
+                    CURRENT BALANCE
                   </div>
                   <div className="h5 mb-0 font-weight-bold text-gray-800">
                     $ {currentBalance.toLocaleString()}
@@ -275,10 +300,10 @@ export default function User() {
               <div className="row no-gutters align-items-center">
                 <div className="col m-3">
                   <div className="text-lg text-blue-800 font-weight-bold text-uppercase mb-1">
-                    Profit
+                    PROFIT
                   </div>
                   <div className="h5 mb-0 font-weight-bold text-gray-800">
-                    {currentBalance - initialBalance}
+                    $ {profit}
                   </div>
                 </div>
                 <div className="col-auto">
@@ -292,7 +317,7 @@ export default function User() {
               <div className="row no-gutters align-items-center">
                 <div className="col m-3">
                   <div className="text-lg text-blue-800 font-weight-bold text-uppercase mb-1">
-                    Profit %
+                    PROFIT %
                   </div>
                   <div className="h5 mb-0 font-weight-bold text-gray-800">
                   {(currentBalance / initialBalance)-1} %
@@ -380,6 +405,7 @@ export default function User() {
             setCurrentBalance={setcurrentBalance}
             userCurrencyHoldings={userCurrencyHoldings}
             setUserCurrencyHoldings={setUserCurrencyHoldings}
+            userPortfolio={userPortfolio}
           />
 
           
@@ -401,7 +427,7 @@ export default function User() {
           )}
 
           {currentScreenType === ScreenTypes.ShowUserPortfolio && (
-            <ShowUserPortfolio />
+            <ShowUserPortfolio userPortfolio={userPortfolio}/>
           )}
         </div>
       </div>

@@ -1,6 +1,7 @@
 import { FC, useEffect, useState } from "react";
 import { URL, USER_ID } from "../../../../constants";
 
+
 interface IUserPortfolio {
   userId: string,
   currencyName: string,
@@ -8,27 +9,11 @@ interface IUserPortfolio {
   id: string
 }
 
+interface ShowUserPortfolioProps {
+  userPortfolio: IUserPortfolio[];
+}
 
-const ShowUserPortfolio = () => {
-  const [userPortfolio, setUserPortfolio] = useState<IUserPortfolio[]>();
-
-  useEffect(() => {
-    const GetUserPortfolio = async () => {
-      try {
-        const response = await fetch(URL + "Portfolio/GetUserPorfolio?userId=" + USER_ID);
-        if (response.ok) {
-          const data = await response.json();
-          console.log(data);
-          setUserPortfolio(data);
-        }
-      } catch (error) {
-        console.error('Fetch error:', error);
-      }
-    };
-
-    GetUserPortfolio();
-  }, []);
-
+const ShowUserPortfolio: FC<ShowUserPortfolioProps> = ({ userPortfolio }) => {
   return (
     <div className="relative overflow-x-auto">
       <table className="w-full text-lg text-left rtl:text-right text-black-500 dark:text-black-400 mt-5">

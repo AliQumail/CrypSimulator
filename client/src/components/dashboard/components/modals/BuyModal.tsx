@@ -72,7 +72,7 @@ const BuyModal = ({ price, currencyName, currentBalance, transactions, setTransa
         onClick={() => setShowModal(true)}
         data-modal-target="default-modal"
         data-modal-toggle="default-modal"
-      > Buy </button>
+      > BUY </button>
       {showModal && (
         <div
           id="default-modal"
@@ -105,7 +105,7 @@ const BuyModal = ({ price, currencyName, currentBalance, transactions, setTransa
                     >
                       Buy
                     </h3>
-                    <p>Your current balance is $ {currentBalance} </p>
+                    <p>Your current balance is $ {currentBalance.toLocaleString()} </p>
                     <br />
                     {
                       price > 0 ?

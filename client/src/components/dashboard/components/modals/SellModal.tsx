@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { URL, USER_ID } from "../../../../constants";
 
-const SellModal = ({ price, currencyName, currentBalance, transactions, setTransactions, setCurrentBalance }: any) => {
+const SellModal = ({ price, currencyName, currentBalance, transactions, setTransactions, setCurrentBalance, userPortfolio }: any) => {
   const [showModal, setShowModal] = useState(false);
 
   const [quantity, setQuantity] = useState(1);
@@ -21,6 +21,16 @@ const SellModal = ({ price, currencyName, currentBalance, transactions, setTrans
     setQuantity(0);
     setTotalPrice(0);
     setShowModal(false);
+  }
+
+  const showRelevantUserPortfolio = () => {
+    userPortfolio = userPortfolio.filter((up:any) => up.currencyName === currencyName)
+    console.log(userPortfolio);
+    if (userPortfolio.length !== 0) return (
+      <span>
+        You hold <strong>{userPortfolio[0].quantity}</strong> of <strong>{userPortfolio[0].currencyName}</strong>
+      </span>
+    );
   }
 
   const handleSell = () => {
@@ -69,7 +79,7 @@ const SellModal = ({ price, currencyName, currentBalance, transactions, setTrans
         onClick={() => setShowModal(true)}
         data-modal-target="default-modal"
         data-modal-toggle="default-modal"
-      > Sell </button>
+      > SELL </button>
       {showModal && (
         <div
           id="default-modal"
@@ -103,6 +113,7 @@ const SellModal = ({ price, currencyName, currentBalance, transactions, setTrans
                       Sell
                     </h3>
                     <p>Your current balance is $ {currentBalance} </p>
+                    <p>{showRelevantUserPortfolio()}</p>
                     <br />
                     {
                       price > 0 ?
