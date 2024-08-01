@@ -49,7 +49,7 @@ const ShowTransactions: FC<ShowTransactionsProps> = ({ transactions }) => {
           <tr>
             <th>Currency</th>
             <th>Quantity</th>
-            <th>Price</th>
+            <th>Price $</th>
             <th>Action</th>
             <th>Date</th>
           </tr>
@@ -61,7 +61,7 @@ const ShowTransactions: FC<ShowTransactionsProps> = ({ transactions }) => {
               <tr key={tran.id}> {/* Unique key for each row */}
                 <td>{tran.currencyName}</td>
                 <td>{tran.quantity}</td>
-                <td>{tran.price}</td>
+                <td>{tran.price.toLocaleString()}</td>
                 <td style={{ color: tran.isBuy ? 'green' : 'red' }}>{tran.isBuy ? "BOUGHT" : "SOLD"}</td>
                 <td>{formatDate(tran.date)}</td>
               </tr>
