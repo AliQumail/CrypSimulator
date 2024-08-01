@@ -9,7 +9,6 @@ import ShowUserPortfolio from "./components/showUserPortfolio/ShowUserPortfolio"
 import HistoryChart from "./components/chart/HistoryChart";
 import ResetModal from "./components/modals/ResetModal";
 
-
 interface ITransaction {
   id: string;
   currencyName: string;
@@ -45,32 +44,22 @@ export default function User() {
   const [initialBalance, setInitialBalance] = useState(amount);
   const [currentBalance, setcurrentBalance] = useState(amount);
 
-
   const [transactions, setTransactions] = useState<ITransaction[]>([]);
   const [userPortfolio, setUserPortfolio] = useState<IUserPortfolio[]>([]);
-
-  const [userCurrencyHoldings, setUserCurrencyHoldings] = useState<
-    IUserCurrencyHoldings[]
-  >([]);
-
+  const [userCurrencyHoldings, setUserCurrencyHoldings] = useState<IUserCurrencyHoldings[]>([]);
   const [currencies, setcurrencies] = useState([]);
   const [pair, setpair] = useState("");
-  const [price, setprice] = useState("0.00"); // my code
-  const [productId, setProductId] = useState(""); //
+  const [price, setprice] = useState("0.00");
+  const [productId, setProductId] = useState("");
   const [pastData, setpastData] = useState({});
-  const ws: any = useRef(null);
+  const ws: any = useRef<WebSocket | null>(null);
   const [records, setRecords] = useState([]);
 
-  const [currentScreenType, setCurrentScreenType] = useState(
-    ScreenTypes.ShowCurrencies
-  );
+  const [currentScreenType, setCurrentScreenType] = useState(ScreenTypes.ShowCurrencies);
 
   const GetUserBalance = async () => {
     try {
-      const response = await fetch(
-        URL + "Transaction/GetUserBalance?userId=" + USER_ID
-      );
-
+      const response = await fetch(URL + "Transaction/GetUserBalance?userId=" + USER_ID);
       if (response.ok) {
         const data = await response.json();
         setcurrentBalance(data.currentBalance);
@@ -82,10 +71,7 @@ export default function User() {
   };
 
   const updateLatestPrice = async () => {
-    let newRecords: any = records.map((obj: any) => {
-      return { ...obj, latestPrice: 20 };
-    });
-
+    let newRecords : any = records.map((obj: any) => ({ ...obj, latestPrice: 20 }));
     setRecords(newRecords);
   };
 
@@ -109,97 +95,82 @@ export default function User() {
     GetTransactionsByUser();
     GetUserBalance();
     GetUserPortfolio();
+
     ws.current = new WebSocket("wss://ws-feed.pro.coinbase.com");
 
-    let pairs: any = [];
+    ws.current.onopen = () => {
+      console.log('WebSocket is connected');
+      
+      // Fetch available products and filter currencies
+      const apiCall = async () => {
+        let pairs: any = [];
+        await fetch(url + "/products")
+          .then((res) => res.json())
+          .then((data) => (pairs = data));
+        
+        let filtered = pairs.filter((pair: any) => pair.quote_currency === "USD");
+        filtered = filtered.sort((a: any, b: any) => (a.base_currency < b.base_currency ? -1 : 1));
+        setcurrencies(filtered);
+        first.current = true;
+      };
 
-    // pairs RETURN ALL CURRENCIES AND THEIR VALUES
-    const apiCall = async () => {
-      await fetch(url + "/products")
-        .then((res) => res.json())
-        .then((data) => (pairs = data));
-
-      // FILTER OUT ANY CURRENCY EXPECT FOR USD
-      let filtered = pairs.filter((pair: any) => {
-        if (pair.quote_currency === "USD") {
-          return pair;
-        }
-      });
-
-      // SORTS THE CURRENCIES IN ALPHABETICAL ORDER
-      filtered = filtered.sort((a: any, b: any) => {
-        if (a.base_currency < b.base_currency) {
-          return -1;
-        }
-        if (a.base_currency > b.base_currency) {
-          return 1;
-        }
-        return 0;
-      });
-
-      setcurrencies(filtered);
-      first.current = true;
+      apiCall();
     };
 
-    apiCall();
+    ws.current.onclose = () => {
+      console.log('WebSocket is closed');
+    };
+
+    ws.current.onerror = (error: any) => {
+      console.error('WebSocket error:', error);
+    };
+
+    return () => {
+      if (ws.current) {
+        ws.current.close();
+      }
+    };
   }, []);
 
   useEffect(() => {
-    if (!first.current) {
+    if (!first.current || !ws.current || ws.current.readyState !== WebSocket.OPEN) {
       return;
     }
 
-    let msg = {
+    const unsubscribeMsg = {
+      type: "unsubscribe",
+      product_ids: [pair],
+      channels: ["ticker"],
+    };
+    const jsonUnsubMsg = JSON.stringify(unsubscribeMsg);
+    ws.current.send(jsonUnsubMsg);
+
+    const subscribeMsg = {
       type: "subscribe",
       product_ids: [pair],
       channels: ["ticker"],
     };
-
-    // try code
-    let newMsg = {
-      type: "unsubscribe",
-      product_ids: ["BTC-USD"],
-      channels: [""],
-    };
-    let newJsonMsg = JSON.stringify(newMsg);
-    ws.current.send(newJsonMsg);
+    const jsonSubMsg = JSON.stringify(subscribeMsg);
+    ws.current.send(jsonSubMsg);
 
     ws.current.onmessage = (e: any) => {
-      let newData = JSON.parse(e.data);
+      const data = JSON.parse(e.data);
 
-      // if (newData.productId === "BTC-USD") {
-      //   setBtcPrice(newData.price);
-      // }
-    };
-    // try code
-
-    let jsonMsg = JSON.stringify(msg);
-
-    ws.current.send(jsonMsg);
-
-    ws.current.onmessage = (e: any) => {
-      let data = JSON.parse(e.data);
-
-      if (data.type !== "ticker") {
-        return;
-      }
-
-      if (data.product_id === pair) {
+      if (data.type === "ticker" && data.product_id === pair) {
         setprice(data.price);
         setProductId(data.product_id);
       }
     };
 
-    let historicalDataURL = `${url}/products/${pair}/candles?granularity=86400`;
+    const historicalDataURL = `${url}/products/${pair}/candles?granularity=86400`;
 
     const fetchHistoricalData = async () => {
-      let dataArr: any = [];
+      let dataArr = [];
       await fetch(historicalDataURL)
         .then((res) => res.json())
         .then((data) => {
           dataArr = data;
-
-          let formattedData = formatData(dataArr);
+          const formattedData = formatData(dataArr);
           setpastData(formattedData);
         });
     };
@@ -211,33 +182,23 @@ export default function User() {
     if (records.length > 0) {
       updateLatestPrice();
     }
-  }, []);
+  }, [records]);
 
   const handleSelect = (e: any) => {
-    let unsubMsg = {
-      type: "unsubscribe",
-      product_ids: [pair],
-      channels: ["ticker"],
-    };
-    let unsub = JSON.stringify(unsubMsg);
     setpair(e.target.value);
   };
 
   const [showTransactions, setShowTransactions] = useState<Boolean>(false);
   const handleShowTransactions = () => {
-    setShowTransactions((prevVal) => !prevVal);
+    setShowTransactions(prevVal => !prevVal);
   };
 
   const GetTransactionsByUser = async () => {
     try {
-      const response = await fetch(
-        URL + "Transaction/GetTransactionsByUser?userId=" + USER_ID
-      );
+      const response = await fetch(URL + "Transaction/GetTransactionsByUser?userId=" + USER_ID);
       if (response.ok) {
         const data = await response.json();
-        console.log(data);
         setTransactions(data);
-        console.log(transactions);
       }
     } catch (error) {
       console.error("Fetch error:", error);
@@ -245,8 +206,6 @@ export default function User() {
   };
 
   const handleScreenType = (currentScreenType: any) => {
-    console.log("/----/");
-    console.log(currentScreenType);
     setCurrentScreenType(currentScreenType);
   };
 
@@ -256,11 +215,12 @@ export default function User() {
     <div className="container mx-auto px-10 mt-5">
       <div className="grid grid-cols-12 gap-4">
         <div className="col-span-3">
-          
+          {/* Sidebar or other content */}
         </div>
       </div>
       <div className="grid grid-cols-12 gap-4">
         <div className="col-span-3">
+          {/* Cards for displaying balances and profit */}
           <div className="card border-left-primary shadow h-100 py-2 mt-4">
             <div className="card-body">
               <div className="row no-gutters align-items-center">
@@ -320,7 +280,7 @@ export default function User() {
                     PROFIT %
                   </div>
                   <div className="h5 mb-0 font-weight-bold text-gray-800">
-                  {(currentBalance / initialBalance)-1} %
+                    {(currentBalance / initialBalance - 1) * 100} %
                   </div>
                 </div>
                 <div className="col-auto">
@@ -330,11 +290,8 @@ export default function User() {
             </div>
           </div>
           <div>
-          <ResetModal/>
+            <ResetModal/>
           </div>
-
-          
-
         </div>
         <div className="col-span-9">
           <div className="text-md font-medium text-center text-black-500 border-b border-black-200 dark:text-black-400 dark:border-black-700">
@@ -377,7 +334,7 @@ export default function User() {
                   } dark:hover:text-red-500`} >
                   PORTFOLIO
                 </button>
-               </li>
+              </li>
             </ul>
           </div>
 
@@ -385,44 +342,41 @@ export default function User() {
             <ShowTransactions transactions={transactions} />
           )}
           {currentScreenType === ScreenTypes.ShowCurrencies && (
-            <div>
+            <div className="flex flex-col items-start justify-start mt-5">
               <div>
-              <BuyModal
-            price={price}
-            currencyName={productId}
-            currentBalance={currentBalance}
-            transactions={transactions}
-            setTransactions={setTransactions}
-            setCurrentBalance={setcurrentBalance}
-          />
+                <BuyModal
+                  price={price}
+                  currencyName={productId}
+                  currentBalance={currentBalance}
+                  transactions={transactions}
+                  setTransactions={setTransactions}
+                  setCurrentBalance={setcurrentBalance}
+                />
 
-          <SellModal
-            price={price}
-            currencyName={productId}
-            currentBalance={currentBalance}
-            transactions={transactions}
-            setTransactions={setTransactions}
-            setCurrentBalance={setcurrentBalance}
-            userCurrencyHoldings={userCurrencyHoldings}
-            setUserCurrencyHoldings={setUserCurrencyHoldings}
-            userPortfolio={userPortfolio}
-          />
-
-          
-              </div>
-              {
-                <select name="currency" value={pair} onChange={handleSelect}>
-                  {currencies.map((cur: any, idx: number) => {
-                    return (
-                      <option key={idx} value={cur.id}>
-                        {cur.display_name}
-                      </option>
-                    );
-                  })}
+                <SellModal
+                  price={price}
+                  currencyName={productId}
+                  currentBalance={currentBalance}
+                  transactions={transactions}
+                  setTransactions={setTransactions}
+                  setCurrentBalance={setcurrentBalance}
+                  userCurrencyHoldings={userCurrencyHoldings}
+                  setUserCurrencyHoldings={setUserCurrencyHoldings}
+                  userPortfolio={userPortfolio}
+                />
+                <b>Select Currency: </b>
+                <select name="currency" value={pair} onChange={handleSelect} className="border-black border-2 m-1">
+                  <label>SELECT CURRENCY</label>
+                  {currencies.map((cur: any, idx: number) => (
+                    <option key={idx} value={cur.id}>
+                      {cur.display_name}
+                    </option>
+                  ))}
                 </select>
-              }
-              price {price}
-              {/* <HistoryChart price={price} data={pastData} />       */}
+                <b>Price:</b>$ {price}
+              </div>
+
+              <HistoryChart price={price} data={pastData} />  
             </div>
           )}
 
