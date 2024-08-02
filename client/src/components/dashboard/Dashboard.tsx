@@ -349,8 +349,11 @@ export default function User() {
                   currencyName={productId}
                   currentBalance={currentBalance}
                   transactions={transactions}
+                  userPortfolio={userPortfolio}
+                  setUserPortfolio={setUserPortfolio}
                   setTransactions={setTransactions}
                   setCurrentBalance={setcurrentBalance}
+
                 />
 
                 <SellModal
@@ -358,11 +361,12 @@ export default function User() {
                   currencyName={productId}
                   currentBalance={currentBalance}
                   transactions={transactions}
+                  userPortfolio={userPortfolio}
+                  setUserPortfolio={setUserPortfolio}
                   setTransactions={setTransactions}
                   setCurrentBalance={setcurrentBalance}
                   userCurrencyHoldings={userCurrencyHoldings}
                   setUserCurrencyHoldings={setUserCurrencyHoldings}
-                  userPortfolio={userPortfolio}
                 />
                 <b>Select Currency: </b>
                 <select name="currency" value={pair} onChange={handleSelect} className="border-black border-2 m-1">

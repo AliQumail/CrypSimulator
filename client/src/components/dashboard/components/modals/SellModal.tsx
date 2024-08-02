@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { URL, USER_ID } from "../../../../constants";
 
-const SellModal = ({ price, currencyName, currentBalance, transactions, setTransactions, setCurrentBalance, userPortfolio }: any) => {
+const SellModal = ({ price, currencyName, currentBalance, transactions, setTransactions, setCurrentBalance, userPortfolio, setUserPortfolio }: any) => {
   const [showModal, setShowModal] = useState(false);
 
   const [quantity, setQuantity] = useState(1);
@@ -33,12 +33,22 @@ const SellModal = ({ price, currencyName, currentBalance, transactions, setTrans
     );
   }
 
+  const updatePortfolio = () => {
+    const updatedPortfolio = userPortfolio.map((up: any) => {
+      if (up.currencyName === currencyName) {
+        return { ...up, quantity: up.quantity - Number(quantity) }; // Create a new object with updated quantity
+      }
+      return up;
+    });
+    setUserPortfolio(updatedPortfolio);
+  };
+
   const handleSell = () => {
     if (totalPrice > currentBalance) {
         alert("Not enough balance");
         return;
     } else {
-        setCurrentBalance(currentBalance- Number(totalPrice));
+        setCurrentBalance(currentBalance - Number(totalPrice));
         const newTransaction: any = {
             currencyName: currencyName,
             quantity: quantity,
@@ -61,11 +71,11 @@ const SellModal = ({ price, currencyName, currentBalance, transactions, setTrans
         }); 
 
         setTransactions((prevTransactions: any) => [
-            ...prevTransactions,
             newTransaction,
+            ...prevTransactions
           ]);
-          console.log(transactions);
-    }
+       updatePortfolio();
+        }
 
     handleClose();
   }
@@ -116,7 +126,7 @@ const SellModal = ({ price, currencyName, currentBalance, transactions, setTrans
                     <p>{showRelevantUserPortfolio()}</p>
                     <br />
                     {
-                      price > 0 ?
+                      price > 0 && userPortfolio.length > 0?
                       <div className="flex flex-wrap -mx-3 mb-6">
                       <div className="mb-6">
                         <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
@@ -143,7 +153,7 @@ const SellModal = ({ price, currencyName, currentBalance, transactions, setTrans
                         />
                       </div>
                     </div> 
-                      : <div>No currency selected!</div>
+                      : <div>Please select a currency that you currently hold</div>
                     }
                     
                   </div>

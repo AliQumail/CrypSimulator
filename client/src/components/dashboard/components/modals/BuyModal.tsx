@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { URL, USER_ID } from "../../../../constants";
 
-const BuyModal = ({ price, currencyName, currentBalance, transactions, setTransactions, setCurrentBalance }: any) => {
+const BuyModal = ({ price, currencyName, currentBalance, transactions, setTransactions, setCurrentBalance, userPortfolio, setUserPortfolio }: any) => {
   const [showModal, setShowModal] = useState(false);
 
   const [quantity, setQuantity] = useState(1);
@@ -54,14 +54,35 @@ const BuyModal = ({ price, currencyName, currentBalance, transactions, setTransa
 
         
         setTransactions((prevTransactions: any) => [
-            ...prevTransactions,
             newTransaction,
+            ...prevTransactions,
           ]);
-          console.log(transactions);
+        
+        // User portfolio
+        updatePortfolio();
     }
 
     handleClose();
   }
+
+  const updatePortfolio = () => {
+    const updatedPortfolio = userPortfolio.map((up: any) => {
+      if (up.currencyName === currencyName) {
+        return { ...up, quantity: up.quantity + Number(quantity) }; // Create a new object with updated quantity
+      }
+      return up; // Return the item unchanged if it does not match
+    });
+  
+    // Check if the currency was found and updated
+    const portfolioFound = updatedPortfolio.some((up: any) => up.currencyName === currencyName);
+  
+    if (!portfolioFound) {
+      // If currency was not found, add a new entry
+      updatedPortfolio.push({ currencyName: currencyName, quantity: quantity });
+    }
+  
+    setUserPortfolio(updatedPortfolio);
+  };
 
   return (
     <>

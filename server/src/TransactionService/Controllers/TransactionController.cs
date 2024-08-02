@@ -52,7 +52,7 @@ public class TransactionController : ControllerBase
     [Route("GetTransactionsByUser")]
     public List<TransactionDto> GetTransactionsByUser([FromQuery] Guid userId)
     {
-        var transactions = _context.Transactions.Where(x => x.UserId == userId ).OrderByDescending(x => x.Date).ToList();
+        var transactions = _context.Transactions.Where(x => x.UserId == userId ).OrderByDescending(x => x.date).ToList();
         var mappedTransactions = _mapper.Map<List<TransactionDto>>(transactions);
         return mappedTransactions; 
     }
