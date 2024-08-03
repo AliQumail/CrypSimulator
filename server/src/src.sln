@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Contracts", "Contracts\Cont
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GatewayService", "GatewayService\GatewayService.csproj", "{5906A8AA-CC4A-481E-AB59-ADDE12C7860F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PorfolioService", "PorfolioService\PorfolioService.csproj", "{92A77691-FB88-4BB7-91A8-473748EAD21C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "portfolioService", "portfolioService\portfolioService.csproj", "{92A77691-FB88-4BB7-91A8-473748EAD21C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TransactionService", "TransactionService\TransactionService.csproj", "{1A3B3D63-B4C1-4154-AF33-75E3C3C069C3}"
 EndProject

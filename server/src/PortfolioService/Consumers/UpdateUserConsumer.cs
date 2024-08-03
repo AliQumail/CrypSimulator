@@ -1,7 +1,7 @@
 using Contracts;
 using MassTransit;
 using MongoDB.Entities;
-namespace PorfolioService.Consumers;
+namespace PortfolioService.Consumers;
 
 public class UpdateUserConsumer : IConsumer<TransactionCreated>
 {

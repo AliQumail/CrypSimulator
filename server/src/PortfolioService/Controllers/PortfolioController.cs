@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Entities;
-using PorfolioService;
+using PortfolioService;
 
 namespace PortfolioService.Controllers;
 

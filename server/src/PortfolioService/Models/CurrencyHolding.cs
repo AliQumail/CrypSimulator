@@ -1,6 +1,6 @@
 using MongoDB.Entities;
 
-namespace PorfolioService;
+namespace PortfolioService;
 
 public class CurrencyHolding : Entity
 {

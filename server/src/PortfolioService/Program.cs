@@ -1,7 +1,7 @@
 using MassTransit;
 using MongoDB.Driver;
 using MongoDB.Entities;
-using PorfolioService.Consumers;
+using PortfolioService.Consumers;
 
 var builder = WebApplication.CreateBuilder(args);
 

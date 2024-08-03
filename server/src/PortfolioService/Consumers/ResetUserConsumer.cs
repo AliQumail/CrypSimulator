@@ -2,7 +2,7 @@ using Contracts;
 using MassTransit;
 using MongoDB.Driver;
 using MongoDB.Entities;
-namespace PorfolioService.Consumers;
+namespace PortfolioService.Consumers;
 
 public class ResetUserConsumer : IConsumer<UserReset>
 {

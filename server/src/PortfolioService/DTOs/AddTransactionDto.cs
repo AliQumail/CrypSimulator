@@ -1,4 +1,4 @@
-namespace PorfolioService;
+namespace PortfolioService;
 
 public class AddTransactionDto
 {
