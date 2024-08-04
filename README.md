@@ -14,7 +14,7 @@
 - 🔄 Service communication occurs via RabbitMQ
 - 🌐 Gateway Service acts as a single server to serve the React frontend
 
-Demo Video
+## Demo Video
 
 https://github.com/user-attachments/assets/7c5dc5ad-5fbf-43cc-9ef6-92cf1697facf
 
