@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { URL, USER_ID } from "../../../../constants";
+import { URL, USER_ID } from "../../../../global/constants";
 
 const SellModal = ({ price, currencyName, currentBalance, userPortfolio, setIsTransactionCompleted }: any) => {
   const [showModal, setShowModal] = useState(false);

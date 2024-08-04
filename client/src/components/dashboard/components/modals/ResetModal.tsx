@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { URL, USER_ID } from "../../../../constants";
+import { URL, USER_ID } from "../../../../global/constants";
 import { useNavigate } from "react-router-dom";
 
 

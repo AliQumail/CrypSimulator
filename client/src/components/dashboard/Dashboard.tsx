@@ -2,35 +2,12 @@ import { useState, useEffect, useRef } from "react";
 import { formatData } from "../../utils";
 import BuyModal from "./components/modals/BuyModal";
 import SellModal from "./components/modals/SellModal";
-import axios from "axios";
-import { URL, USER_ID } from "../../constants";
+import { URL, USER_ID } from "../../global/constants";
 import ShowTransactions from "./components/showTransactions/ShowTransactions";
 import ShowUserPortfolio from "./components/showUserPortfolio/ShowUserPortfolio";
 import HistoryChart from "./components/chart/HistoryChart";
 import ResetModal from "./components/modals/ResetModal";
-
-interface ITransaction {
-  id: string;
-  currencyName: string;
-  quantity: number;
-  price: number;
-  isBuy: boolean;
-  date: Date;
-  userId: string;
-}
-
-interface IUserPortfolio {
-  userId: string,
-  currencyName: string,
-  quantity: number, 
-  id: string
-}
-
-interface IUserCurrencyHoldings {
-  userId: string;
-  currencyName: string;
-  amount: number;
-}
+import { ITransaction, IUserPortfolio } from "../../global/Interfaces";
 
 enum ScreenTypes {
   ShowTransactions = "ShowTransactions",
@@ -46,7 +23,6 @@ export default function User() {
 
   const [transactions, setTransactions] = useState<ITransaction[]>([]);
   const [userPortfolio, setUserPortfolio] = useState<IUserPortfolio[]>([]);
-  const [userCurrencyHoldings, setUserCurrencyHoldings] = useState<IUserCurrencyHoldings[]>([]);
   const [currencies, setcurrencies] = useState([]);
   const [pair, setpair] = useState("");
   const [price, setprice] = useState("0.00");
@@ -175,15 +151,10 @@ export default function User() {
     if (records.length > 0) {
       updateLatestPrice();
     }
-  }, [records]);
+  });
 
   const handleSelect = (e: any) => {
     setpair(e.target.value);
-  };
-
-  const [showTransactions, setShowTransactions] = useState<Boolean>(false);
-  const handleShowTransactions = () => {
-    setShowTransactions(prevVal => !prevVal);
   };
 
   const GetTransactions = async () => {
@@ -205,13 +176,14 @@ export default function User() {
   const [isTransactionCompleted, setIsTransactionCompleted] = useState(false);
   useEffect(()=>{
     console.log("isTransactionCompleted");
-    if (isTransactionCompleted)
-    {
-      GetUserBalance();
-      GetTransactions();
-      GetUserPortfolio();
-      setIsTransactionCompleted(false);
-    }
+    const timer = setTimeout(async () => {
+        await GetUserBalance();
+        await GetTransactions();
+        await GetUserPortfolio();
+        setIsTransactionCompleted(false);
+      }, 500);
+
+      return () => clearTimeout(timer)
   }, [isTransactionCompleted])
 
   const profit = (currentBalance - initialBalance).toLocaleString();

@@ -1,17 +1,7 @@
 import { FC, useEffect, useState } from "react";
-import { URL, USER_ID } from "../../../../constants";
+import { IUserPortfolio, ShowUserPortfolioProps } from "../../../../global/Interfaces";
 
 
-interface IUserPortfolio {
-  userId: string,
-  currencyName: string,
-  quantity: number, 
-  id: string
-}
-
-interface ShowUserPortfolioProps {
-  userPortfolio: IUserPortfolio[];
-}
 
 const ShowUserPortfolio: FC<ShowUserPortfolioProps> = ({ userPortfolio }) => {
 

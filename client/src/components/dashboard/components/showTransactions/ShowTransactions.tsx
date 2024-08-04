@@ -1,19 +1,6 @@
 import { FC, useState, useEffect } from "react";
 import moment from 'moment';
-
-interface ITransaction {
-  id: string;
-  currencyName: string;
-  quantity: number;
-  price: number;
-  isBuy: boolean;
-  date: Date;
-  userId: string;
-}
-
-interface ShowTransactionsProps {
-  transactions: ITransaction[];
-}
+import { ITransaction, ShowTransactionsProps } from "../../../../global/Interfaces";
 
 const ShowTransactions: FC<ShowTransactionsProps> = ({ transactions }) => {
   const [searchValue, setSearchValue] = useState("");
