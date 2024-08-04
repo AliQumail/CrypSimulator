@@ -7,7 +7,7 @@
 - 📊 Each cryptocurrency is displayed with detailed price history visualized using charts
 - 📉 Enables you to compare how much profit or loss you made based on your trading
 
-![image](https://github.com/user-attachments/assets/31eeccd9-8d43-413c-9d8f-5c0ec2d39604)
+![CrypSimulator](https://github.com/user-attachments/assets/5059380d-ba8a-4620-94f9-4ca60eb55176)
 
 ## About the Architecture
 
