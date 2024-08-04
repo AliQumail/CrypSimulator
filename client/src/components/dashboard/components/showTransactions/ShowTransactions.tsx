@@ -28,7 +28,6 @@ const ShowTransactions: FC<ShowTransactionsProps> = ({ transactions }) => {
     const filtered = transactions.filter(transaction =>
       transaction.currencyName.toLowerCase().includes(searchValue.toLowerCase())
     );
-    console.log(filtered);
     setFilteredTransactions(filtered);
   }, [searchValue, transactions]);
 

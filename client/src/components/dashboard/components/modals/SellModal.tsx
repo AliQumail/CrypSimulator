@@ -25,7 +25,6 @@ const SellModal = ({ price, currencyName, currentBalance, transactions, setTrans
 
   const showRelevantUserPortfolio = () => {
     userPortfolio = userPortfolio.filter((up:any) => up.currencyName === currencyName)
-    console.log(userPortfolio);
     if (userPortfolio.length !== 0) return (
       <span>
         You hold <strong>{userPortfolio[0].quantity}</strong> of <strong>{userPortfolio[0].currencyName}</strong>

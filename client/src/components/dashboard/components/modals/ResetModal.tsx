@@ -19,11 +19,8 @@ const ResetModal = () => {
       );
       if (response.ok) {
         const data = await response.json();
-        console.log(data);
       }
-    } catch (error) {
-      console.error("Fetch error:", error);
-    }
+    } catch (error) {}
     handleClose();
     navigate("/selectbalance", { replace: true });
   };

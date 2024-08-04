@@ -23,7 +23,6 @@ const ShowUserPortfolio: FC<ShowUserPortfolioProps> = ({ userPortfolio }) => {
     const filtered = userPortfolio.filter(userPortfolio =>
       userPortfolio.currencyName.toLowerCase().includes(searchValue.toLowerCase())
     );
-    console.log(filtered);
     setfilteredUserPortfolio(filtered);
   }, [searchValue, userPortfolio]);
 

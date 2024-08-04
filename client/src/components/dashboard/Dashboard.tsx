@@ -83,7 +83,6 @@ export default function User() {
       const response = await fetch(URL + "Portfolio/GetUserPorfolio?userId=" + USER_ID);
       if (response.ok) {
         const data = await response.json();
-        console.log(data);
         setUserPortfolio(data);
       }
     } catch (error) {
@@ -99,8 +98,6 @@ export default function User() {
     ws.current = new WebSocket("wss://ws-feed.pro.coinbase.com");
 
     ws.current.onopen = () => {
-      console.log('WebSocket is connected');
-      
       // Fetch available products and filter currencies
       const apiCall = async () => {
         let pairs: any = [];
@@ -117,13 +114,9 @@ export default function User() {
       apiCall();
     };
 
-    ws.current.onclose = () => {
-      console.log('WebSocket is closed');
-    };
+    ws.current.onclose = () => {};
 
-    ws.current.onerror = (error: any) => {
-      console.error('WebSocket error:', error);
-    };
+    ws.current.onerror = (error: any) => {};
 
     return () => {
       if (ws.current) {
