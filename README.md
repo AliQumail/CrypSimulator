@@ -1,18 +1,18 @@
 # CrypSimulator
 
-About the App
+## About the App
 
-📈 Virtual trading platform for cryptocurrencies
-💰 Allows you to select an initial amount for trading and buy up to 100+ cryptocurrencies
-📊 Each cryptocurrency is displayed with detailed price history visualized using charts
-📉 Enables you to compare how much profit or loss you made based on your trading
+- 📈 Virtual trading platform for cryptocurrencies
+- 💰 Allows you to select an initial amount for trading and buy up to 100+ cryptocurrencies
+- 📊 Each cryptocurrency is displayed with detailed price history visualized using charts
+- 📉 Enables you to compare how much profit or loss you made based on your trading
 
-About the Architecture
+## About the Architecture
 
-🏗️ Powered by a Microservice architecture
-🛠️ Contains three different microservices: Transaction Service, Portfolio Service, and Gateway Service
-🔄 Service communication occurs via RabbitMQ
-🌐 Gateway Service acts as a single server to serve the React frontend
+- 🏗️ Powered by a Microservice architecture
+- 🛠️ Contains three different microservices: Transaction Service, Portfolio Service, and Gateway Service
+- 🔄 Service communication occurs via RabbitMQ
+- 🌐 Gateway Service acts as a single server to serve the React frontend
 
 Demo Video
 
