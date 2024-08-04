@@ -6,8 +6,8 @@
 - 💰 Allows you to select an initial amount for trading and buy up to 100+ cryptocurrencies
 - 📊 Each cryptocurrency is displayed with detailed price history visualized using charts
 - 📉 Enables you to compare how much profit or loss you made based on your trading
-
-![CrypSimulator](https://github.com/user-attachments/assets/5059380d-ba8a-4620-94f9-4ca60eb55176)
+  
+<img src="https://github.com/user-attachments/assets/c7aad9e5-1eb5-4bb1-a80d-4501ce4889fc" alt="CrypSimulator" width="60%"/>
 
 ## About the Architecture
 
