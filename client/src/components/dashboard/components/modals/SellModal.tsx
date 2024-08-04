@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { URL, USER_ID } from "../../../../constants";
 
-const SellModal = ({ price, currencyName, currentBalance, transactions, setTransactions, setCurrentBalance, userPortfolio, setUserPortfolio }: any) => {
+const SellModal = ({ price, currencyName, currentBalance, userPortfolio, setIsTransactionCompleted }: any) => {
   const [showModal, setShowModal] = useState(false);
 
   const [quantity, setQuantity] = useState(1);
   const [totalPrice, setTotalPrice] = useState(Number(price));
+  const userCurrentPortfolio = getCurrentUserCurrencyHolding();
 
   const handleQuantity = (event: any) => {
     setQuantity(event.target.value);
@@ -23,31 +24,32 @@ const SellModal = ({ price, currencyName, currentBalance, transactions, setTrans
     setShowModal(false);
   }
 
-  const showRelevantUserPortfolio = () => {
+  function getCurrentUserCurrencyHolding(){
     userPortfolio = userPortfolio.filter((up:any) => up.currencyName === currencyName)
-    if (userPortfolio.length !== 0) return (
+    if (userPortfolio.length !== 0) return userPortfolio[0];
+    return null; 
+  }
+  
+  const showRelevantUserPortfolio = () => {
+    if (userCurrentPortfolio && userCurrentPortfolio.quantity !== 0) return (
       <span>
-        You hold <strong>{userPortfolio[0].quantity}</strong> of <strong>{userPortfolio[0].currencyName}</strong>
+        You hold <strong>{userCurrentPortfolio.quantity}</strong> of <strong>{userCurrentPortfolio.currencyName}</strong>
       </span>
     );
   }
 
-  const updatePortfolio = () => {
-    const updatedPortfolio = userPortfolio.map((up: any) => {
-      if (up.currencyName === currencyName) {
-        return { ...up, quantity: up.quantity - Number(quantity) }; // Create a new object with updated quantity
-      }
-      return up;
-    });
-    setUserPortfolio(updatedPortfolio);
-  };
+ 
 
   const handleSell = () => {
-    if (totalPrice > currentBalance) {
-        alert("Not enough balance");
+    if (totalPrice <= 0 || quantity <= 0) {
+      alert("Invalid transaction");
+      return;
+    }
+
+    if (userCurrentPortfolio && userCurrentPortfolio.quantity < quantity) {
+        alert("You don't hold enough currency");
         return;
     } else {
-        setCurrentBalance(currentBalance - Number(totalPrice));
         const newTransaction: any = {
             currencyName: currencyName,
             quantity: quantity,
@@ -69,11 +71,7 @@ const SellModal = ({ price, currencyName, currentBalance, transactions, setTrans
           return response.json(); 
         }); 
 
-        setTransactions((prevTransactions: any) => [
-            newTransaction,
-            ...prevTransactions
-          ]);
-       updatePortfolio();
+        setIsTransactionCompleted(true);
         }
 
     handleClose();
@@ -125,7 +123,7 @@ const SellModal = ({ price, currencyName, currentBalance, transactions, setTrans
                     <p>{showRelevantUserPortfolio()}</p>
                     <br />
                     {
-                      price > 0 && userPortfolio.length > 0?
+                      price > 0 && userCurrentPortfolio && userCurrentPortfolio.quantity !== 0?
                       <div className="flex flex-wrap -mx-3 mb-6">
                       <div className="mb-6">
                         <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">

@@ -91,7 +91,7 @@ export default function User() {
   };
 
   useEffect(() => {
-    GetTransactionsByUser();
+    GetTransactions();
     GetUserBalance();
     GetUserPortfolio();
 
@@ -186,7 +186,7 @@ export default function User() {
     setShowTransactions(prevVal => !prevVal);
   };
 
-  const GetTransactionsByUser = async () => {
+  const GetTransactions = async () => {
     try {
       const response = await fetch(URL + "Transaction/GetTransactionsByUser?userId=" + USER_ID);
       if (response.ok) {
@@ -201,6 +201,18 @@ export default function User() {
   const handleScreenType = (currentScreenType: any) => {
     setCurrentScreenType(currentScreenType);
   };
+
+  const [isTransactionCompleted, setIsTransactionCompleted] = useState(false);
+  useEffect(()=>{
+    console.log("isTransactionCompleted");
+    if (isTransactionCompleted)
+    {
+      GetUserBalance();
+      GetTransactions();
+      GetUserPortfolio();
+      setIsTransactionCompleted(false);
+    }
+  }, [isTransactionCompleted])
 
   const profit = (currentBalance - initialBalance).toLocaleString();
 
@@ -341,25 +353,15 @@ export default function User() {
                   price={price}
                   currencyName={productId}
                   currentBalance={currentBalance}
-                  transactions={transactions}
-                  userPortfolio={userPortfolio}
-                  setUserPortfolio={setUserPortfolio}
-                  setTransactions={setTransactions}
-                  setCurrentBalance={setcurrentBalance}
-
+                  setIsTransactionCompleted={setIsTransactionCompleted}
                 />
 
                 <SellModal
                   price={price}
                   currencyName={productId}
-                  currentBalance={currentBalance}
-                  transactions={transactions}
+                  currentBalance={currentBalance}    
                   userPortfolio={userPortfolio}
-                  setUserPortfolio={setUserPortfolio}
-                  setTransactions={setTransactions}
-                  setCurrentBalance={setcurrentBalance}
-                  userCurrencyHoldings={userCurrencyHoldings}
-                  setUserCurrencyHoldings={setUserCurrencyHoldings}
+                  setIsTransactionCompleted={setIsTransactionCompleted}
                 />
                 <b>Select Currency: </b>
                 <select name="currency" value={pair} onChange={handleSelect} className="border-black border-2 m-1">
@@ -373,7 +375,7 @@ export default function User() {
                 <b>Price:</b>$ {price}
               </div>
 
-              <HistoryChart price={price} data={pastData} />  
+              { Number(price) > 0 ? <HistoryChart price={price} data={pastData} /> : <div className="mt-10 w-full text-center text-lg text-gray-800 font-weight-bold text-uppercase">NO CURRENCY SELECTED!</div> }
             </div>
           )}
 

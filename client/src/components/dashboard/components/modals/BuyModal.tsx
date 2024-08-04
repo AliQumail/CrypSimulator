@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { URL, USER_ID } from "../../../../constants";
 
-const BuyModal = ({ price, currencyName, currentBalance, transactions, setTransactions, setCurrentBalance, userPortfolio, setUserPortfolio }: any) => {
+const BuyModal = ({ price, currencyName, currentBalance, setIsTransactionCompleted }: any) => {
   const [showModal, setShowModal] = useState(false);
 
   const [quantity, setQuantity] = useState(1);
@@ -24,11 +24,14 @@ const BuyModal = ({ price, currencyName, currentBalance, transactions, setTransa
   }
 
   const handleBuy = () => {
+    if (totalPrice <= 0 || quantity <= 0) {
+      alert("Invalid transaction");
+      return;
+    }
     if (totalPrice > currentBalance) {
         alert("Not enough balance");
         return;
     } else {
-        setCurrentBalance(currentBalance- Number(totalPrice));
         const newTransaction: any = {
             currencyName: currencyName,
             quantity: Number(quantity),
@@ -50,39 +53,10 @@ const BuyModal = ({ price, currencyName, currentBalance, transactions, setTransa
           }
           return response.json(); 
         })
-
-
-        
-        setTransactions((prevTransactions: any) => [
-            newTransaction,
-            ...prevTransactions,
-          ]);
-        
-        // User portfolio
-        updatePortfolio();
+        setIsTransactionCompleted(true);
     }
-
     handleClose();
   }
-
-  const updatePortfolio = () => {
-    const updatedPortfolio = userPortfolio.map((up: any) => {
-      if (up.currencyName === currencyName) {
-        return { ...up, quantity: up.quantity + Number(quantity) }; // Create a new object with updated quantity
-      }
-      return up; // Return the item unchanged if it does not match
-    });
-  
-    // Check if the currency was found and updated
-    const portfolioFound = updatedPortfolio.some((up: any) => up.currencyName === currencyName);
-  
-    if (!portfolioFound) {
-      // If currency was not found, add a new entry
-      updatedPortfolio.push({ currencyName: currencyName, quantity: quantity });
-    }
-  
-    setUserPortfolio(updatedPortfolio);
-  };
 
   return (
     <>
